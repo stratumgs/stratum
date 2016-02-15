@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 import stratum.games
 import stratum.servers.client
@@ -37,7 +38,11 @@ class MainHandler(LoggingHandler):
 class ConfigureHandler(LoggingHandler):
     def get(self):
         players = stratum.servers.client.get_connected_clients()
-        self.render("configure.html", players=players)
+        config_path = os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "..", "games", "tictactoe", "config.json")
+        config = json.load(open(config_path, "r"))
+        self.render("configure.html", players=players, config=config)
 
 
 class PlayHandler(LoggingHandler):

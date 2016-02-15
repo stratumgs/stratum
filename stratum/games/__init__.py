@@ -2,7 +2,7 @@ import stratum.games.tictactoe
 
 
 _GAME_ENGINES = {
-    "tictactoe": tictactoe.TicTacToeEngine
+    "tictactoe": tictactoe.Engine
 }
 
 

@@ -6,24 +6,17 @@
     <h1>Configure</h1>
     <p>Configure a new game of TicTacToe.</p>
     <form method="post" action="/game/tictactoe/play">
-        <p>
-            Player X:
-            <select name="players">
-                <option>Choose Player</option>
-                {% for player in players %}
-                <option>{{ player }}</option>
-                {% end %}
-            </select>
-        </p>
-        <p>
-            Player O:
-            <select name="players">
-                <option>Choose Player</option>
-                {% for player in players %}
-                <option>{{ player }}</option>
-                {% end %}
-            </select>
-        </p>
+        {% for i in range(config["num_players"]) %}
+            <p>
+                Player {{ config["player_names"][i] if i < len(config["player_names"]) else i + 1 }}:
+                <select name="players">
+                    <option>Choose Player</option>
+                    {% for player in players %}
+                        <option>{{ player }}</option>
+                    {% end %}
+                </select>
+            </p>
+        {% end %}
         <input type="submit" value="Play!">
     </form>
 {% end %}
