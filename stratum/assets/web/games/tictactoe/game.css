@@ -1,0 +1,24 @@
+#tictactoe-table {
+    width: 300px;
+    height: 300px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-collapse: collapse;
+}
+
+#tictactoe-table tr {
+    margin: 0;
+    padding: 0;
+}
+
+#tictactoe-table td {
+    margin: 0;
+    padding: 0;
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+    text-align: center;
+    line-height: 85px;
+    font-size: 85px;
+}

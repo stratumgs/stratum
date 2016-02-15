@@ -11,13 +11,15 @@ import tornado.ioloop
 def init(port):
     template_path = os.path.join(
         os.path.dirname(os.path.realpath(__file__)),
-        "..",
-        "assets",
-        "templates")
+        "..", "assets", "templates")
+    static_files_path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        "..", "assets", "web")
     app = tornado.web.Application([
         (r"/", MainHandler),
         (r"/game/tictactoe/configure", ConfigureHandler),
-        (r"/game/tictactoe/play", PlayHandler)
+        (r"/game/tictactoe/play", PlayHandler),
+        (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": static_files_path})
     ], template_path=template_path, debug=True)
     server = tornado.httpserver.HTTPServer(app)
     server.listen(port)
@@ -48,4 +50,6 @@ class PlayHandler(LoggingHandler):
         players = [stratum.servers.client.get_connected_client(pid) for pid in player_ids]
         game_engine = stratum.games.init_game_engine("tictactoe", players)
         game_engine.start()
-        self.render("play.html")
+
+        game_template = self.render_string("games/tictactoe.html")
+        self.render("play.html", game_template=game_template)
