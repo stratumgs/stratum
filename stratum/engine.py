@@ -9,3 +9,8 @@ class EngineClient(object):
 
     def read(self):
         return self._read_pipe.readline().strip()
+
+    def close(self):
+        self.write(b"close\n")
+        self._write_pipe.close()
+        self._read_pipe.close()

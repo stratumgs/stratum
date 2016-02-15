@@ -63,3 +63,5 @@ class TicTacToeEngine(multiprocessing.Process):
             print()
             self._get_player_move()
         print("Player {} wins".format(self._winner))
+        self._o_client.close()
+        self._x_client.close()

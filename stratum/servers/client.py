@@ -40,17 +40,26 @@ class ClientServer(tornado.tcpserver.TCPServer):
 
             def stream_closed():
                 print("client {} died".format(name))
+                to_engine.close()
+                from_engine.close()
 
             def message_from_client(msg):
                 to_engine.write(msg)
                 stream.read_until(b"\n", message_from_client)
 
             def message_from_engine(msg):
+                if msg == b"close\n":
+                    stream.close()
+                    to_engine.close()
+                    from_engine.close()
+                    return
                 stream.write(msg)
                 from_engine.read_until(b"\n", message_from_engine)
 
             stream.set_close_callback(stream_closed)
             stream.read_until(b"\n", message_from_client)
             from_engine.read_until(b"\n", message_from_engine)
+
+            print("Client {} connected.".format(name))
 
         stream.read_until(b"\n", new_client)
