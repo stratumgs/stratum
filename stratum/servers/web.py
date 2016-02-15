@@ -17,8 +17,9 @@ def init(port):
         "..", "assets", "web")
     app = tornado.web.Application([
         (r"/", MainHandler),
-        (r"/game/tictactoe/configure", ConfigureHandler),
-        (r"/game/tictactoe/play", PlayHandler),
+        (r"/games/tictactoe/configure", ConfigureHandler),
+        (r"/games/tictactoe/start", StartHandler),
+        (r"/games/tictactoe/view/([\d]+)", ViewHandler),
         (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": static_files_path})
     ], template_path=template_path, debug=True)
     server = tornado.httpserver.HTTPServer(app)
@@ -44,12 +45,16 @@ class ConfigureHandler(LoggingHandler):
         self.render("configure.html", players=players, config=config)
 
 
-class PlayHandler(LoggingHandler):
+class StartHandler(LoggingHandler):
     def post(self):
         player_ids = self.get_arguments("players")
         players = [stratum.servers.client.get_connected_client(pid) for pid in player_ids]
         game_engine = stratum.games.init_game_engine("tictactoe", players)
         game_engine.start()
+        self.redirect("/games/tictactoe/view/1")
 
+
+class ViewHandler(LoggingHandler):
+    def get(self, gid):
         game_template = self.render_string("games/tictactoe.html")
-        self.render("play.html", game_template=game_template)
+        self.render("view.html", game_template=game_template)        
