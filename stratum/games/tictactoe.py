@@ -3,6 +3,13 @@ import os
 import stratum.engine
 import tornado.ioloop
 
+
+CONFIG = {
+    "num_players": 2,
+    "player_names": ["X", "O"] 
+}
+
+
 class Engine(multiprocessing.Process):
     
     def __init__(self, players):

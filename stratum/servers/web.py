@@ -38,10 +38,7 @@ class MainHandler(LoggingHandler):
 class ConfigureHandler(LoggingHandler):
     def get(self):
         players = stratum.servers.client.get_connected_clients()
-        config_path = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..", "games", "tictactoe", "config.json")
-        config = json.load(open(config_path, "r"))
+        config = stratum.games.get_game_configuration("tictactoe")
         self.render("configure.html", players=players, config=config)
 
 
