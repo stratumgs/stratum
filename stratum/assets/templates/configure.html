@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Configure{% end %}
+
+{% block body %}
+    <h1>Configure</h1>
+    <p>Configure a new game of TicTacToe.</p>
+    <form method="post" action="/game/tictactoe/play">
+        <p>
+            Player X:
+            <select name="players">
+                <option>Choose Player</option>
+                {% for player in players %}
+                <option>{{ player }}</option>
+                {% end %}
+            </select>
+        </p>
+        <p>
+            Player O:
+            <select name="players">
+                <option>Choose Player</option>
+                {% for player in players %}
+                <option>{{ player }}</option>
+                {% end %}
+            </select>
+        </p>
+        <input type="submit" value="Play!">
+    </form>
+{% end %}
