@@ -4,6 +4,7 @@ import os
 import stratum.games
 import stratum.servers.client
 import tornado.web
+import tornado.websocket
 import tornado.httpserver
 import tornado.ioloop
 
@@ -20,6 +21,7 @@ def init(port):
         (r"/games/tictactoe/configure", ConfigureHandler),
         (r"/games/tictactoe/start", StartHandler),
         (r"/games/tictactoe/view/([\d]+)", ViewHandler),
+        (r"/games/tictactoe/view/([\d]+)/socket", ViewSocketHandler),
         (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": static_files_path})
     ], template_path=template_path, debug=True)
     server = tornado.httpserver.HTTPServer(app)
@@ -48,13 +50,19 @@ class ConfigureHandler(LoggingHandler):
 class StartHandler(LoggingHandler):
     def post(self):
         player_ids = self.get_arguments("players")
-        players = [stratum.servers.client.get_connected_client(pid) for pid in player_ids]
-        game_engine = stratum.games.init_game_engine("tictactoe", players)
-        game_engine.start()
-        self.redirect("/games/tictactoe/view/1")
+        game_id = stratum.games.init_game_engine("tictactoe", player_ids=player_ids)
+        self.redirect("/games/tictactoe/view/{}".format(game_id))
 
 
 class ViewHandler(LoggingHandler):
     def get(self, gid):
         game_template = self.render_string("games/tictactoe.html")
-        self.render("view.html", game_template=game_template)        
+        self.render("view.html", game_template=game_template)
+
+
+class ViewSocketHandler(tornado.websocket.WebSocketHandler):
+    def open(self, game_id):
+        stratum.games.get_game_runner(int(game_id)).add_view(self)
+
+    def on_message(self, message):
+        pass

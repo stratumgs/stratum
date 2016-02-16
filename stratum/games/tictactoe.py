@@ -1,3 +1,4 @@
+import json
 import multiprocessing
 import os
 import stratum.engine
@@ -12,7 +13,7 @@ CONFIG = {
 
 class Engine(multiprocessing.Process):
     
-    def __init__(self, players):
+    def __init__(self, players=[], view_pipe_fd=None):
         super(Engine, self).__init__()
         print(tornado.ioloop.IOLoop.instance())
         self._board = [[None for _ in range(3)] for _ in range(3)]
@@ -20,6 +21,7 @@ class Engine(multiprocessing.Process):
         self._x_turn = True
         self._x_client = stratum.engine.EngineClient(players[0])
         self._o_client = stratum.engine.EngineClient(players[1])
+        self._view_pipe = open(view_pipe_fd, "wb", buffering=0)
 
     def _is_game_over(self):
         for row in self._board:
@@ -62,13 +64,22 @@ class Engine(multiprocessing.Process):
         (row, col) = (int(x) for x in move.split(","))
         self._board[row][col] = player
 
+    def _send_state(self):
+        state = "state {}\n".format(json.dumps(self._board)).encode()
+        self._x_client.write(state)
+        self._o_client.write(state)
+        self._view_pipe.write(state)
+
     def run(self):
         while not self._is_game_over():
             print()
             for row in self._board:
                 print(row)
             print()
+            self._send_state()
             self._get_player_move()
+        self._send_state()
         print("Player {} wins".format(self._winner))
         self._o_client.close()
         self._x_client.close()
+        self._view_pipe.close()
