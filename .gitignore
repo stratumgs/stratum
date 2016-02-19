@@ -2,5 +2,8 @@
 *.sublime-project
 *.sublime-workspace
 
+# PyCharm Files
+.idea
+
 # Python Files
 __pycache__
