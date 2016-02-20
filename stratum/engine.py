@@ -1,26 +1,43 @@
 import os
+import socket
+import stratum.util
 import tornado.iostream
 
+import pickle
 
-class EngineRunner(object):
 
-    def __init__(self, engine, players):
+def init_engine_runner(engine, players):
+    if os.name == "posix":
+        return PipeEngineRunner(engine, players)
+    else:
+        return SocketEngineRunner(engine, players)
+
+
+def init_engine_client(connection_info):
+    if os.name == "posix":
+        return PipeEngineClient(connection_info)
+    else:
+        return SocketEngineClient(connection_info)
+
+
+class BaseEngineRunner(object):
+
+    def __init__(self, engine_constructor, players):
         self._last_state = None
         self._connected_views = []
 
-        read_pipe, write_pipe = os.pipe()
-        self._read_pipe = tornado.iostream.PipeIOStream(read_pipe)
+        view_connection = self.init_view_connection()
 
-        self._engine = engine(players=players, view_pipe_fd=write_pipe)
-        self._engine.start()
+        engine = engine_constructor(players=players, view_connection=view_connection)
+        engine.start()
 
-        self._read_pipe.read_until(b"\n", self._on_receive_state)
+        self.read_from_view_connection(b"\n", self._on_receive_state)
 
     def _on_receive_state(self, state):
         self._last_state = state
         for view in self._connected_views:
             view.write_message(state)
-        self._read_pipe.read_until(b"\n", self._on_receive_state)
+        self.read_from_view_connection(b"\n", self._on_receive_state)
 
     def add_view(self, view):
         if self._last_state:
@@ -28,7 +45,29 @@ class EngineRunner(object):
         self._connected_views.append(view)
 
 
-class EngineClient(object):
+class PipeEngineRunner(BaseEngineRunner):
+
+    def init_view_connection(self):
+        read_pipe, write_pipe = os.pipe()
+        self._view_read_pipe = tornado.iostream.PipeIOStream(read_pipe)
+        return (None, write_pipe)
+
+    def read_from_view_connection(self, delimiter, callback):
+        self._view_read_pipe.read_until(delimiter, callback)
+
+
+class SocketEngineRunner(BaseEngineRunner):
+
+    def init_view_connection(self):
+        self.connector_server = stratum.util.SingleClientServer()
+        return self.connector_server.get_port()
+
+    def read_from_view_connection(self, delimiter, callback):
+        stream = yield self.connector_server.get_stream()
+        stream.read_until(delimiter, callback)
+
+
+class PipeEngineClient(object):
 
     def __init__(self, file_descriptors):
         self._read_pipe = open(file_descriptors[0], "r")
@@ -44,3 +83,26 @@ class EngineClient(object):
         self.write(b"close\n")
         self._write_pipe.close()
         self._read_pipe.close()
+
+
+class SocketEngineClient(object):
+
+    def __init__(self, port):
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0)
+        self._socket.connect(('127.0.0.1', port))
+        self._socket_read_file = self._socket.makefile()
+        self._socket_write_file = self._socket.makefile(mode="wb")
+
+    def write(self, message):
+        self._socket_write_file.write(message)
+        # self._socket.send(message)
+
+    def read(self):
+        return self._socket_read_file.readline().strip()
+        # return self._socket.recv(1024).decode().strip()
+
+    def close(self):
+        self.write(b"close\n")
+        self._socket_read_file.close()
+        self._socket_write_file.close()
+        self._socket.close()

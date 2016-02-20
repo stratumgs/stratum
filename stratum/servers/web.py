@@ -51,6 +51,7 @@ class StartHandler(LoggingHandler):
     def post(self):
         player_ids = self.get_arguments("players")
         game_id = stratum.games.init_game_engine("tictactoe", player_ids=player_ids)
+        # self.write("done.")
         self.redirect("/games/tictactoe/view/{}".format(game_id))
 
 

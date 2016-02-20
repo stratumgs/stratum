@@ -16,7 +16,7 @@ def init_game_engine(engine_name, player_ids=[]):
     game_id = _CREATED_GAME_ID
     _CREATED_GAME_ID += 1
     players = [stratum.servers.client.get_connected_client(pid) for pid in player_ids]
-    engine_runner = stratum.engine.EngineRunner(_GAME_ENGINES[engine_name].Engine, players)
+    engine_runner = stratum.engine.init_engine_runner(_GAME_ENGINES[engine_name].Engine, players)
     _CREATED_GAMES[game_id] = engine_runner
     return game_id
 

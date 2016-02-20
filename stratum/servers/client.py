@@ -1,12 +1,19 @@
 import os
+import stratum.util
+import tornado.gen
+import tornado.ioloop
 import tornado.iostream
+import tornado.concurrent
 import tornado.tcpserver
 
 _CONNECTED_CLIENTS = {}
 
 
 def init(port):
-    client_server = ClientServer()
+    if os.name == "posix":
+        client_server = PipeClientProxyServer()
+    else:
+        client_server = SocketClientProxyServer()
     client_server.listen(port)
 
 
@@ -24,42 +31,77 @@ def _make_pipe_pair():
     return (r1, w2), (r2, w1)
 
 
-class ClientServer(tornado.tcpserver.TCPServer):
+class BaseClientProxyServer(tornado.tcpserver.TCPServer):
 
+    @tornado.gen.coroutine
     def handle_stream(self, stream, address):
 
         def new_client(name):
             name = name.decode().strip()
 
-            client_end, engine_end = _make_pipe_pair()
-
-            _CONNECTED_CLIENTS[name] = engine_end
-
-            to_engine = tornado.iostream.PipeIOStream(client_end[1])
-            from_engine = tornado.iostream.PipeIOStream(client_end[0])
+            _CONNECTED_CLIENTS[name] = self.init_engine_connection_endpoints()
 
             def stream_closed():
                 print("client {} died".format(name))
-                to_engine.close()
-                from_engine.close()
+                self.close_engine_connection_endpoints()
 
             def message_from_client(msg):
-                to_engine.write(msg)
+                self.write_to_engine(msg)
                 stream.read_until(b"\n", message_from_client)
 
             def message_from_engine(msg):
                 if msg == b"close\n":
                     stream.close()
-                    to_engine.close()
-                    from_engine.close()
+                    self.close_engine_endpoints()
                     return
                 stream.write(msg)
-                from_engine.read_until(b"\n", message_from_engine)
+                self.read_from_engine(b"\n", message_from_engine)
 
             stream.set_close_callback(stream_closed)
             stream.read_until(b"\n", message_from_client)
-            from_engine.read_until(b"\n", message_from_engine)
+            self.read_from_engine(b"\n", message_from_engine)
 
             print("Client {} connected.".format(name))
 
         stream.read_until(b"\n", new_client)
+
+
+class PipeClientProxyServer(BaseClientProxyServer):
+
+    def init_engine_connection_endpoints(self, name):
+        client_end, engine_end = _make_pipe_pair()
+        self.to_engine = tornado.iostream.PipeIOStream(client_end[1])
+        self.from_engine = tornado.iostream.PipeIOStream(client_end[0])
+        return engine_end
+
+    def close_engine_connection_endpoints(self):
+        self.to_engine.close()
+        self.from_engine.close()
+
+    def write_to_engine(msg):
+        self.to_engine.write(msg)
+
+    def read_from_engine(delimeter, callback):
+        self.from_engine.read_until(delimeter, callback)
+
+
+class SocketClientProxyServer(BaseClientProxyServer):
+
+    def init_engine_connection_endpoints(self):
+        self.connector_server = stratum.util.SingleClientServer()
+        return self.connector_server.get_port()
+
+    @tornado.gen.coroutine
+    def close_engine_connection_endpoints(self):
+        stream = yield self.connector_server.get_stream()
+        stream.close()
+
+    @tornado.gen.coroutine
+    def write_to_engine(self, msg):
+        stream = yield self.connector_server.get_stream()
+        stream.write(msg)
+
+    @tornado.gen.coroutine
+    def read_from_engine(self, delimeter, callback):
+        stream = yield self.connector_server.get_stream()
+        stream.read_until(delimeter, callback)
