@@ -68,7 +68,7 @@ class ClientProxyServer(tornado.tcpserver.TCPServer):
 
 class PipeClientProxyServerHelper():
 
-    def init_engine_connection_endpoints(self, name):
+    def init_engine_connection_endpoints(self):
         client_end, engine_end = _make_pipe_pair()
         self.to_engine = tornado.iostream.PipeIOStream(client_end[1])
         self.from_engine = tornado.iostream.PipeIOStream(client_end[0])
@@ -78,10 +78,10 @@ class PipeClientProxyServerHelper():
         self.to_engine.close()
         self.from_engine.close()
 
-    def write_to_engine(msg):
+    def write_to_engine(self, msg):
         self.to_engine.write(msg)
 
-    def read_from_engine(delimeter, callback):
+    def read_from_engine(self, delimeter, callback):
         self.from_engine.read_until(delimeter, callback)
 
 

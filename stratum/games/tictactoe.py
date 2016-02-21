@@ -84,4 +84,4 @@ class Engine(multiprocessing.Process):
         print("Player {} wins".format(self._winner))
         self._o_client.close()
         self._x_client.close()
-        self._view_clients.close()
+        self._view_clients.close(False)
