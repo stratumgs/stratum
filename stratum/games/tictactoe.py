@@ -52,18 +52,18 @@ class Engine(multiprocessing.Process):
         move = None
         if self._x_turn:
             player = "x"
-            self._x_client.write(b"turn\n")
-            move = self._x_client.read()
+            self._x_client.write("turn\n")
+            move = self._x_client.read().strip()
         else:
             player = "o"
-            self._o_client.write(b"turn\n")
-            move = self._o_client.read()
+            self._o_client.write("turn\n")
+            move = self._o_client.read().strip()
         self._x_turn = not self._x_turn
         (row, col) = (int(x) for x in move.split(","))
         self._board[row][col] = player
 
     def _send_state(self):
-        state = "state {}\n".format(json.dumps(self._board)).encode()
+        state = "state {}\n".format(json.dumps(self._board))
         self._x_client.write(state)
         self._o_client.write(state)
         self._view_clients.write(state)
