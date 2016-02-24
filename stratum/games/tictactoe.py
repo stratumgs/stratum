@@ -1,7 +1,7 @@
 import json
 import multiprocessing
 import os
-import stratum.engine
+import stratum.engine.client
 import tornado.ioloop
 
 
@@ -69,9 +69,9 @@ class Engine(multiprocessing.Process):
         self._view_clients.write(state)
 
     def run(self):
-        self._x_client = stratum.engine.init_engine_client(self._players[0])
-        self._o_client = stratum.engine.init_engine_client(self._players[1])
-        self._view_clients = stratum.engine.init_engine_client(self._view_connection)
+        self._x_client = stratum.engine.client.init_engine_client(self._players[0])
+        self._o_client = stratum.engine.client.init_engine_client(self._players[1])
+        self._view_clients = stratum.engine.client.init_engine_client(self._view_connection)
 
         while not self._is_game_over():
             print()
