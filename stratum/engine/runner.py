@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 import stratum.util
 import tornado.ioloop
@@ -19,8 +20,12 @@ class BaseEngineRunner(object):
 
         view_connection = self.init_view_connection()
 
-        engine = engine_constructor(players=players, view_connection=view_connection)
-        engine.start()
+        def start_process():
+            engine = engine_constructor(players=players, view_connection=view_connection)
+            engine.run()
+ 
+        engine_process = multiprocessing.Process(target=start_process)
+        engine_process.start()
 
         self.read_from_view_connection(b"\n", self._on_receive_state)
 
