@@ -12,6 +12,11 @@ def init_engine_runner(engine, players):
         return SocketEngineRunner(engine, players)
 
 
+def _start_process(engine_constructor, players, view_connection):
+    engine = engine_constructor(players=players, view_connection=view_connection)
+    engine.run()
+
+
 class BaseEngineRunner(object):
 
     def __init__(self, engine_constructor, players):
@@ -19,12 +24,9 @@ class BaseEngineRunner(object):
         self._connected_views = []
 
         view_connection = self.init_view_connection()
-
-        def start_process():
-            engine = engine_constructor(players=players, view_connection=view_connection)
-            engine.run()
  
-        engine_process = multiprocessing.Process(target=start_process)
+        engine_process = multiprocessing.Process(target=_start_process,
+            args=(engine_constructor, players, view_connection))
         engine_process.start()
 
         self.read_from_view_connection(b"\n", self._on_receive_state)
