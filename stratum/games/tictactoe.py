@@ -1,7 +1,4 @@
-import json
-import os
-import stratum.engine.client
-import tornado.ioloop
+import stratum.engine
 
 
 CONFIG = {
@@ -10,18 +7,15 @@ CONFIG = {
 }
 
 
-class Engine():
+class Engine(stratum.engine.BaseEngine):
     
     def __init__(self, players=[], view_connection=None):
-        super(Engine, self).__init__()
+        super(Engine, self).__init__(players=players, view_connection=view_connection)
         self._board = [[None for _ in range(3)] for _ in range(3)]
         self._winner = None
         self._x_turn = True
-        self._x_client = stratum.engine.client.init_engine_client(players[0])
-        self._o_client = stratum.engine.client.init_engine_client(players[1])
-        self._view_clients = stratum.engine.client.init_engine_client(view_connection)
 
-    def _is_game_over(self):
+    def is_game_over(self):
         for row in self._board:
             if all("x" == cell for cell in row):
                 self._winner = "x"
@@ -47,37 +41,16 @@ class Engine():
                 return True
         return not any(None == cell for row in self._board for cell in row)
 
-    def _get_player_move(self):
-        player = None
-        move = None
-        if self._x_turn:
-            player = "x"
-            self._x_client.write("turn\n")
-            move = self._x_client.read().strip()
-        else:
-            player = "o"
-            self._o_client.write("turn\n")
-            move = self._o_client.read().strip()
+    def get_state(self):
+        return {
+            "type": "state",
+            "board": self._board,
+            "winner": self._winner
+        }
+
+    def play_turn(self):
+        cur_player_id, cur_player_letter = (0, "X") if self._x_turn else (1, "O")
+        self.send_message_to_player(cur_player_id, {"type": "turn"})
+        move = self.receive_message_from_player(cur_player_id)
+        self._board[move["row"]][move["column"]] = cur_player_letter
         self._x_turn = not self._x_turn
-        (row, col) = (int(x) for x in move.split(","))
-        self._board[row][col] = player
-
-    def _send_state(self):
-        state = "state {}\n".format(json.dumps(self._board))
-        self._x_client.write(state)
-        self._o_client.write(state)
-        self._view_clients.write(state)
-
-    def run(self):
-        while not self._is_game_over():
-            print()
-            for row in self._board:
-                print(row)
-            print()
-            self._send_state()
-            self._get_player_move()
-        self._send_state()
-        print("Player {} wins".format(self._winner))
-        self._o_client.close()
-        self._x_client.close()
-        self._view_clients.close(False)
