@@ -113,7 +113,8 @@ class PipeClientProxyServerHelper():
         self.from_engine.close()
 
     def write_to_engine(self, msg):
-        self.to_engine.write(msg)
+        if not self.to_engine.closed():
+            self.to_engine.write(msg)
 
     def read_from_engine(self, delimeter, callback):
         self.from_engine.read_until(delimeter, callback)
@@ -131,9 +132,11 @@ class SocketClientProxyServerHelper():
             lambda s: s.result().close())
 
     def write_to_engine(self, msg):
+        def cb(s):
+            if not s.result.closed():
+                s.result().write(msg)
         tornado.ioloop.IOLoop.current().add_future(
-            self.connector_server.get_stream(),
-            lambda s: s.result().write(msg))
+            self.connector_server.get_stream(), cb)
 
     def read_from_engine(self, delimeter, callback):
         tornado.ioloop.IOLoop.current().add_future(
