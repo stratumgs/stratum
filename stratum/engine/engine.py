@@ -1,5 +1,6 @@
 from .client import init_engine_client
 import json
+import sys
 
 
 class BaseEngine(object):
@@ -10,10 +11,13 @@ class BaseEngine(object):
         self._view_client = init_engine_client(view_connection)
 
     def _send_state(self):
-        state = json.dumps(self.get_state()) + "\n"
+        msg = {
+            "type": "message",
+            "payload": json.dumps(self.get_state())
+        }
         for p in self._player_clients:
-            p.write(state)
-        self._view_client.write(state)
+            p.write(msg)
+        self._view_client.write(msg)
 
     def run(self):
         self._send_state()
@@ -25,11 +29,20 @@ class BaseEngine(object):
         self._view_client.close(False)
 
     def send_message_to_player(self, player_id, message):
-        message = json.dumps(message) + "\n"
-        self._player_clients[player_id].write(message)
+        self._player_clients[player_id].write({
+            "type": "message",
+            "payload": json.dumps(message)
+        })
 
     def receive_message_from_player(self, player_id):
-        return json.loads(self._player_clients[player_id].read().strip())
+        obj = self._player_clients[player_id].read()
+        if obj["type"] == "close":
+            print("Player id {} disconnected.".format(player_id))
+            for p in self._player_clients:
+                p.close()
+            self._view_client.close(False)
+            sys.exit(1)
+        return json.loads(obj["payload"])
 
     def is_game_over(self):
         raise NotImplementedError

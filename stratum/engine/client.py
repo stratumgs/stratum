@@ -1,3 +1,4 @@
+import json
 import os
 import socket
 
@@ -20,14 +21,14 @@ class PipeEngineClient(object):
             self._write_pipe = open(file_descriptors[1], "wb", buffering=0)
 
     def write(self, message):
-        self._write_pipe.write(message.encode())
+        self._write_pipe.write("{}\n".format(json.dumps(message)).encode())
 
     def read(self):
-        return self._read_pipe.readline().decode()
+        return json.loads(self._read_pipe.readline().decode().strip())
 
     def close(self, write_close=True):
         if write_close:
-            self.write("close\n")
+            self.write({"type": "close"})
         if self._write_pipe:
             self._write_pipe.close()
         if self._read_pipe:
@@ -43,14 +44,14 @@ class SocketEngineClient(object):
         self._socket_write_file = self._socket.makefile("wb", 0)
 
     def write(self, message):
-        self._socket_write_file.write(message.encode())
+        self._socket_write_file.write("{}\n".format(json.dumps(message)).encode())
 
     def read(self):
-        return self._socket_read_file.readline().decode()
+        return json.loads(self._socket_read_file.readline().decode().strip())
 
     def close(self, write_close=True):
         if write_close:
-            self.write("close\n")
+            self.write({"type": "close"})
         self._socket_read_file.close()
         self._socket_write_file.close()
         self._socket.close()

@@ -1,3 +1,4 @@
+import json
 import os
 import stratum.util
 import tornado.ioloop
@@ -6,6 +7,8 @@ import tornado.concurrent
 import tornado.tcpserver
 
 _CONNECTED_CLIENTS = {}
+
+_NAMELESS_CLIENT_NUMBER = 1
 
 
 def init(port):
@@ -31,8 +34,30 @@ class ClientProxyServer(tornado.tcpserver.TCPServer):
 
     def handle_stream(self, stream, address):
 
-        def new_client(name):
-            name = name.decode().strip()
+        def new_client(connect_message):
+            connect_message = json.loads(connect_message.decode().strip())
+
+            if connect_message["type"] != "connect":
+                print("Invalid message from client {}".format(address))
+                return
+
+            name = connect_message["payload"]
+            if name is None:
+                global _NAMELESS_CLIENT_NUMBER
+                name = "client-{}".format(_NAMELESS_CLIENT_NUMBER)
+                _NAMELESS_CLIENT_NUMBER += 1
+            elif name in _CONNECTED_CLIENTS:
+                n = 1
+                while True:
+                    possible_name = "{}-{}".format(name, n)
+                    if possible_name not in _CONNECTED_CLIENTS:
+                        name = possible_name
+                        break
+
+            stream.write("{}\n".format(json.dumps({
+                "type": "name",
+                "payload": name
+            })).encode())
 
             if os.name == "posix":
                 helper = PipeClientProxyServerHelper()
@@ -43,18 +68,27 @@ class ClientProxyServer(tornado.tcpserver.TCPServer):
 
             def stream_closed():
                 print("client {} died".format(name))
+                helper.write_to_engine("{}\n".format(json.dumps({
+                    "type": "close"
+                })).encode())
                 helper.close_engine_connection_endpoints()
 
             def message_from_client(msg):
                 helper.write_to_engine(msg)
-                stream.read_until(b"\n", message_from_client)
-
-            def message_from_engine(msg):
-                if msg == b"close\n":
+                obj = json.loads(msg.decode().strip())
+                if obj["type"] == "close":
                     stream.close()
                     helper.close_engine_connection_endpoints()
                     return
+                stream.read_until(b"\n", message_from_client)
+
+            def message_from_engine(msg):
                 stream.write(msg)
+                obj = json.loads(msg.decode().strip())
+                if obj["type"] == "close":
+                    stream.close()
+                    helper.close_engine_connection_endpoints()
+                    return
                 helper.read_from_engine(b"\n", message_from_engine)
 
             stream.set_close_callback(stream_closed)
