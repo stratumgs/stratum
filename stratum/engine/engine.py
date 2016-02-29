@@ -26,7 +26,7 @@ class BaseEngine(object):
             self._send_state()
         for p in self._player_clients:
             p.close()
-        self._view_client.close(False)
+        self._view_client.close()
 
     def send_message_to_player(self, player_id, message):
         self._player_clients[player_id].write({
@@ -40,7 +40,7 @@ class BaseEngine(object):
             print("Player id {} disconnected.".format(player_id))
             for p in self._player_clients:
                 p.close()
-            self._view_client.close(False)
+            self._view_client.close()
             sys.exit(1)
         return json.loads(obj["payload"])
 
