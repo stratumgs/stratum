@@ -1,3 +1,4 @@
+import json
 import multiprocessing
 import os
 import stratum.util
@@ -32,8 +33,15 @@ class BaseEngineRunner(object):
         self.read_from_view_connection(b"\n", self._on_receive_state)
 
     def _on_receive_state(self, state):
+        obj = json.loads(state.decode().strip())
+        if obj["type"] == "close":
+            self.close_view_connection()
+            return
         self._last_state = state
-        for view in self._connected_views:
+        for view in self._connected_views[:]:
+            if not view.is_open:
+                self._connected_views.remove(view)
+                continue
             view.write_message(state)
         self.read_from_view_connection(b"\n", self._on_receive_state)
 
@@ -53,6 +61,9 @@ class PipeEngineRunner(BaseEngineRunner):
     def read_from_view_connection(self, delimiter, callback):
         self._view_read_pipe.read_until(delimiter, callback)
 
+    def close_view_connection(self):
+        self._view_read_pipe.close()
+
 
 class SocketEngineRunner(BaseEngineRunner):
 
@@ -64,3 +75,8 @@ class SocketEngineRunner(BaseEngineRunner):
         tornado.ioloop.IOLoop.current().add_future(
             self.connector_server.get_stream(),
             lambda s: s.result().read_until(delimiter, callback))
+
+    def close_view_connection(self):
+        tornado.ioloop.IOLoop.current().add_future(
+            self.connector_server.get_stream(),
+            lambda s: s.result().close())

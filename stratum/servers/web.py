@@ -62,7 +62,11 @@ class ViewHandler(LoggingHandler):
 
 class ViewSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self, game_id):
+        self.is_open = True
         stratum.games.get_game_runner(int(game_id)).add_view(self)
+
+    def on_close(self):
+        self.is_open = False
 
     def on_message(self, message):
         pass
