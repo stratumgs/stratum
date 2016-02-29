@@ -133,7 +133,7 @@ class SocketClientProxyServerHelper():
 
     def write_to_engine(self, msg):
         def cb(s):
-            if not s.result.closed():
+            if not s.result().closed():
                 s.result().write(msg)
         tornado.ioloop.IOLoop.current().add_future(
             self.connector_server.get_stream(), cb)
