@@ -12,5 +12,13 @@
     <a href="/">Home</a>
 
     {% raw game_template %}
+    <script>
+        var StratumView = {
+            onstate: function() {
+                throw new Error("StratumView.onstate should be implemented.");
+            }
+        };
+    </script>
     <script src="/assets/games/tictactoe/game.js"></script>
+    <script src="/assets/js/view.js"></script>
 {% end %}
