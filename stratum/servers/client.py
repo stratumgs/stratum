@@ -24,6 +24,12 @@ def get_connected_client(client_name):
     return _CONNECTED_CLIENTS[client_name]
 
 
+def remove_connected_client(client_name):
+    client = _CONNECTED_CLIENTS[client_name]
+    del _CONNECTED_CLIENTS[client_name]
+    return client
+
+
 def _make_pipe_pair():
     r1, w1 = os.pipe()
     r2, w2 = os.pipe()
