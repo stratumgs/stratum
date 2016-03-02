@@ -47,7 +47,7 @@ class ConfigureHandler(LoggingHandler):
     def get(self, game):
         players = stratum.servers.client.get_connected_clients()
         config = stratum.games.get_game_configuration(game)
-        self.render("configure.html", players=players, config=config)
+        self.render("configure.html", players=players, game_name=game, config=config)
 
 
 class StartHandler(LoggingHandler):
