@@ -17,27 +17,27 @@ class Engine(stratum.engine.BaseEngine):
 
     def is_game_over(self):
         for row in self._board:
-            if all("x" == cell for cell in row):
-                self._winner = "x"
+            if all("X" == cell for cell in row):
+                self._winner = "X"
                 return True
-            elif all("o" == cell for cell in row):
-                self._winner = "o"
+            elif all("O" == cell for cell in row):
+                self._winner = "O"
                 return True
         for col in range(3):
             col = tuple(self._board[i][col] for i in range(3))
-            if all("x" == cell for cell in col):
-                self._winner = "x"
+            if all("X" == cell for cell in col):
+                self._winner = "X"
                 return True
-            elif all("o" == cell for cell in col):
-                self._winner = "o"
+            elif all("O" == cell for cell in col):
+                self._winner = "O"
                 return True
         for mod in (1, -1):
             diag = tuple(self._board[mod*i][i] for i in range(3))
-            if all("x" == cell for cell in diag):
-                self._winner = "x"
+            if all("X" == cell for cell in diag):
+                self._winner = "X"
                 return True
-            elif all("o" == cell for cell in diag):
-                self._winner = "o"
+            elif all("O" == cell for cell in diag):
+                self._winner = "O"
                 return True
         return not any(None == cell for row in self._board for cell in row)
 

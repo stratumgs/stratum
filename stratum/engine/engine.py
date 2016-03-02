@@ -24,6 +24,7 @@ class BaseEngine(object):
         while not self.is_game_over():
             self.play_turn()
             self._send_state()
+        self._send_state()
         for p in self._player_clients:
             p.close()
         self._view_client.close()
