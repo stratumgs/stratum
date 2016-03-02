@@ -36,8 +36,10 @@ class LoggingHandler(tornado.web.RequestHandler):
 
 
 class MainHandler(LoggingHandler):
+
     def get(self):
-        self.render("home.html")
+        games = stratum.games.get_available_game_engines()
+        self.render("home.html", games=games)
 
 
 class ConfigureHandler(LoggingHandler):

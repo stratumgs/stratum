@@ -1,6 +1,7 @@
 import stratum.engine.runner
-import stratum.games.tictactoe
 import stratum.servers.client
+
+from . import tictactoe
 
 
 _GAME_ENGINES = {
@@ -9,6 +10,11 @@ _GAME_ENGINES = {
 
 _CREATED_GAME_ID = 0
 _CREATED_GAMES = {}
+
+
+def get_available_game_engines():
+    return [(game_key, get_game_configuration(game_key))
+        for game_key in sorted(_GAME_ENGINES.keys())]
 
 
 def init_game_engine(engine_name, player_ids=[]):

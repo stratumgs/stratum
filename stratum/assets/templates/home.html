@@ -5,5 +5,11 @@
 {% block body %}
     <h1>Home</h1>
     <p>The landing page for the server.</p>
-    <p><a href="/games/tictactoe/configure">Play TicTacToe</a></p>
+
+    <h2>Available Games</h2>
+    <ul>
+        {% for game_name, game_config in games %}
+            <li><a href="/games/{{ game_name }}/configure">{{ game_config["display_name"] }}</a></li>
+        {% end %}
+    </ul>
 {% end %}
