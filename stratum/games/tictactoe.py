@@ -7,6 +7,14 @@ CONFIG = {
 }
 
 
+def _get_first_if_all_equal(lst):
+    first = lst[0]
+    for el in lst[1:]:
+        if el != first:
+            return None
+    return first
+
+
 class Engine(stratum.engine.BaseEngine):
     
     def __init__(self, players=[], view_connection=None):
@@ -16,29 +24,23 @@ class Engine(stratum.engine.BaseEngine):
         self._x_turn = True
 
     def is_game_over(self):
-        for row in self._board:
-            if all("X" == cell for cell in row):
+        for i in range(3):
+            row_val = _get_first_if_all_equal(self._board[i])
+            col_val = _get_first_if_all_equal(tuple(self._board[j][i] for j in range(3)))
+            if row_val == "X" or col_val == "X":
                 self._winner = "X"
                 return True
-            elif all("O" == cell for cell in row):
+            elif row_val == "O" or col_val == "O":
                 self._winner = "O"
                 return True
-        for col in range(3):
-            col = tuple(self._board[i][col] for i in range(3))
-            if all("X" == cell for cell in col):
-                self._winner = "X"
-                return True
-            elif all("O" == cell for cell in col):
-                self._winner = "O"
-                return True
-        for mod in (1, -1):
-            diag = tuple(self._board[mod*i][i] for i in range(3))
-            if all("X" == cell for cell in diag):
-                self._winner = "X"
-                return True
-            elif all("O" == cell for cell in diag):
-                self._winner = "O"
-                return True
+        diag1_val = _get_first_if_all_equal(tuple(self._board[i][i] for i in range(3)))
+        diag2_val = _get_first_if_all_equal(tuple(self._board[2-i][i] for i in range(3)))
+        if diag1_val == "X" or diag2_val == "X":
+            self._winner = "X"
+            return True
+        elif diag1_val == "O" or diag2_val == "O":
+            self._winner = "O"
+            return True
         return not any(None == cell for row in self._board for cell in row)
 
     def get_state(self):
