@@ -53,6 +53,20 @@ class Engine(stratum.engine.BaseEngine):
     def play_turn(self):
         cur_player_id, cur_player_letter = (0, "X") if self._x_turn else (1, "O")
         self.send_message_to_player(cur_player_id, {"type": "turn"})
-        move = self.receive_message_from_player(cur_player_id)
+        while True:
+            move = self.receive_message_from_player(cur_player_id)
+            row, col = move["row"], move["column"]
+            error = None
+            if row > 2 or col > 2:
+                error = "out-of-bounds"
+            elif self._board[row][col] is not None:
+                error = "space-not-empty"
+            if error is None:
+                break
+            self.send_message_to_player(cur_player_id, {
+                "type": "repeat-turn",
+                "error": error,
+                "last-move": move
+            })
         self._board[move["row"]][move["column"]] = cur_player_letter
         self._x_turn = not self._x_turn
