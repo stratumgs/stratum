@@ -17,7 +17,8 @@ class SingleClientServer(tornado.tcpserver.TCPServer):
         return self._port
 
     def handle_stream(self, stream, address):
-        self._stream_future.set_result(stream)
+        if not self._stream_future.done():
+            self._stream_future.set_result(stream)
         self.io_loop.add_callback(lambda: self.stop())
 
     def get_stream(self):
