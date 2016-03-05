@@ -17,7 +17,8 @@ def init(port):
         os.path.dirname(os.path.realpath(__file__)),
         "..", "assets", "web")
     app = tornado.web.Application([
-        tornado.web.url(r"/", MainHandler, name="main"),
+        tornado.web.url(r"/", GamesHandler, name="main"),
+        tornado.web.url(r"/games/?", GamesHandler, name="games"),
         tornado.web.url(r"/games/([^/]+)/configure", ConfigureHandler, name="configure"),
         tornado.web.url(r"/games/([^/]+)/start", StartHandler, name="start"),
         tornado.web.url(r"/games/([^/]+)/view/([\d]+)", ViewHandler, name="view"),
@@ -35,11 +36,11 @@ class LoggingHandler(tornado.web.RequestHandler):
             req=self.request))
 
 
-class MainHandler(LoggingHandler):
+class GamesHandler(LoggingHandler):
 
     def get(self):
         games = stratum.games.get_available_game_engines()
-        self.render("home.html", games=games)
+        self.render("games.html", games=games)
 
 
 class ConfigureHandler(LoggingHandler):
