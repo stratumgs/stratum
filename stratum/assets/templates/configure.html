@@ -5,7 +5,7 @@
 {% block body %}
     <h1>Configure</h1>
     <p>Configure a new game of {{ config["display_name"] }}.</p>
-    <form method="post" action="/games/{{ game_name }}/start">
+    <form method="post" action="{{ reverse_url('start', game_name) }}">
         {% for i in range(config["num_players"]) %}
             <p>
                 Player {{ config["player_names"][i] if i < len(config["player_names"]) else i + 1 }}:

@@ -9,7 +9,7 @@
     <h2>Available Games</h2>
     <ul>
         {% for game_name, game_config in games %}
-            <li><a href="/games/{{ game_name }}/configure">{{ game_config["display_name"] }}</a></li>
+            <li><a href="{{ reverse_url('configure', game_name) }}">{{ game_config["display_name"] }}</a></li>
         {% end %}
     </ul>
 {% end %}

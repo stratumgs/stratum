@@ -17,12 +17,12 @@ def init(port):
         os.path.dirname(os.path.realpath(__file__)),
         "..", "assets", "web")
     app = tornado.web.Application([
-        (r"/", MainHandler),
-        (r"/games/([^/]+)/configure", ConfigureHandler),
-        (r"/games/([^/]+)/start", StartHandler),
-        (r"/games/([^/]+)/view/([\d]+)", ViewHandler),
-        (r"/games/([^/]+)/view/([\d]+)/socket", ViewSocketHandler),
-        (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": static_files_path})
+        tornado.web.url(r"/", MainHandler, name="main"),
+        tornado.web.url(r"/games/([^/]+)/configure", ConfigureHandler, name="configure"),
+        tornado.web.url(r"/games/([^/]+)/start", StartHandler, name="start"),
+        tornado.web.url(r"/games/([^/]+)/view/([\d]+)", ViewHandler, name="view"),
+        tornado.web.url(r"/games/([^/]+)/view/([\d]+)/socket", ViewSocketHandler, name="view_socket"),
+        tornado.web.url(r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": static_files_path}, name="static")
     ], template_path=template_path, debug=True)
     server = tornado.httpserver.HTTPServer(app)
     server.listen(port)
