@@ -3,7 +3,7 @@
 {% block title %}View{% end %}
 
 {% block head %}
-    <link rel="stylesheet" href="{{ reverse_url('static', 'games/tictactoe/game.css') }}">
+    <link rel="stylesheet" href="{{ reverse_url('static', 'games/{}/game.css'.format(game_name)) }}">
 {% end %}
 
 {% block body %}
@@ -19,6 +19,6 @@
             }
         };
     </script>
-    <script src="{{ reverse_url('static', 'games/tictactoe/game.js') }}"></script>
+    <script src="{{ reverse_url('static', 'games/{}/game.js'.format(game_name)) }}"></script>
     <script src="{{ reverse_url('static', 'js/view.js') }}"></script>
 {% end %}

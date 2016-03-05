@@ -62,7 +62,7 @@ class ViewHandler(LoggingHandler):
 
     def get(self, game, gid):
         game_template = self.render_string("games/{}.html".format(game))
-        self.render("view.html", game_template=game_template)
+        self.render("view.html", game_name=game, game_template=game_template)
 
 
 class ViewSocketHandler(tornado.websocket.WebSocketHandler):
