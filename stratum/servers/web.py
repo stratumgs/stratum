@@ -18,7 +18,7 @@ def init(port):
         "..", "assets", "web")
     app = tornado.web.Application([
         tornado.web.url(r"/", GamesHandler, name="main"),
-        tornado.web.url(r"/games/?", GamesHandler, name="games"),
+        tornado.web.url(r"/games", GamesHandler, name="games"),
         tornado.web.url(r"/games/([^/]+)/configure", ConfigureHandler, name="configure"),
         tornado.web.url(r"/games/([^/]+)/start", StartHandler, name="start"),
         tornado.web.url(r"/games/([^/]+)/view/([\d]+)", ViewHandler, name="view"),

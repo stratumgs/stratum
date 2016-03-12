@@ -1,0 +1,55 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+header {
+    background: #3C97BF;
+    height: 40px;
+    padding: 10px;
+    box-shadow: 0 0 5px #333;
+}
+
+header h1 {
+    display: inline-block;
+    margin: 0;
+    height: 40px;
+    line-height: 40px;
+    font-size: 30px;
+}
+
+header h1 a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+header h1 a:hover {
+    color: #FFD569;
+    text-shadow: 0 0 1px #333;
+}
+
+header nav {
+    display: inline-block;
+    font-size: 20px;
+    vertical-align: top;
+    height: 40px;
+    line-height: 40px;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    transition: color 0.2s;
+}
+
+header nav a:hover {
+    color: #FFD569;
+    text-shadow: 0 0 1px #333;
+}

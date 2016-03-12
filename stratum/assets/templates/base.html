@@ -2,9 +2,26 @@
 <html>
 <head>
     <title>{% block title %}Title{% end %}</title>
+
+    <link rel="stylesheet" href="{{ reverse_url('static', 'css/main.css') }}">
+
     {% block head %}{% end %}
 </head>
 <body>
-    {% block body %}{% end %}
+
+    <header>
+        <div class="wrapper">
+            <h1><a href="{{ reverse_url('main') }}">STRATUM</a></h1>
+            <nav>
+                <a href="{{ reverse_url('games') }}">Games</a>
+                <a href="#">Matches</a>
+                <a href="#">Players</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        {% block body %}{% end %}
+    </div>
 </body>
 </html>
