@@ -1,16 +1,17 @@
 import json
 import multiprocessing
 import os
+import stratum.games
 import stratum.util
 import tornado.ioloop
 import tornado.iostream
 
 
-def init_engine_runner(engine, players):
+def init_engine_runner(engine, engine_name, players):
     if os.name == "posix":
-        return PipeEngineRunner(engine, players)
+        return PipeEngineRunner(engine, engine_name, players)
     else:
-        return SocketEngineRunner(engine, players)
+        return SocketEngineRunner(engine, engine_name, players)
 
 
 def _start_process(engine_constructor, players, view_connection):
@@ -20,9 +21,13 @@ def _start_process(engine_constructor, players, view_connection):
 
 class BaseEngineRunner(object):
 
-    def __init__(self, engine_constructor, players):
+    def __init__(self, engine_constructor, engine_name, players):
         self._last_state = None
         self._connected_views = []
+
+        self.engine_name = engine_name
+        self.engine_display_name = stratum.games.get_game_configuration(engine_name)["display_name"]
+        self.is_running = True
 
         view_connection = self.init_view_connection()
  
@@ -36,6 +41,7 @@ class BaseEngineRunner(object):
         obj = json.loads(state.decode().strip())
         if obj["type"] == "close":
             self.close_view_connection()
+            self.is_running = False
             return
         self._last_state = state
         for view in self._connected_views[:]:

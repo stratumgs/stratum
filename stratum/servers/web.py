@@ -23,6 +23,7 @@ def init(port):
         tornado.web.url(r"/games/([^/]+)/start", StartHandler, name="start"),
         tornado.web.url(r"/games/([^/]+)/view/([\d]+)", ViewHandler, name="view"),
         tornado.web.url(r"/games/([^/]+)/view/([\d]+)/socket", ViewSocketHandler, name="view_socket"),
+        tornado.web.url(r"/matches", MatchesHandler, name="matches"),
         tornado.web.url(r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": static_files_path}, name="static")
     ], template_path=template_path, debug=True)
     server = tornado.httpserver.HTTPServer(app)
@@ -77,3 +78,18 @@ class ViewSocketHandler(tornado.websocket.WebSocketHandler):
 
     def on_message(self, message):
         pass
+
+
+class MatchesHandler(LoggingHandler):
+
+    def get(self):
+        all_matches = stratum.games.get_current_games()
+        active_matches = []
+        inactive_matches = []
+        for match in all_matches:
+            if match[1].is_running:
+                active_matches.append(match)
+            else:
+                inactive_matches.append(match)
+        self.render("matches.html",
+            active_matches=active_matches, inactive_matches=inactive_matches)
