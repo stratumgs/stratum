@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ reverse_url('static', 'css/configure.css') }}">
 {% end %}
 
-{% block body %}
+{% block content %}
     <h1>Configure</h1>
     <p>Configure a new game of {{ config["display_name"] }}.</p>
     <form method="post" action="{{ reverse_url('start', game_name) }}">
