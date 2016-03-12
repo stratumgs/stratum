@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Players - Stratum{% end %}
+
+{% block body %}
+    <h1>Players</h1>
+
+    <ul class="page-list">
+        {% for player in players %}
+            <li>{{ player }}</li>
+        {% end %}
+    </ul>
+{% end %}
