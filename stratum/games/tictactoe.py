@@ -3,6 +3,7 @@ import stratum.engine
 
 CONFIG = {
     "display_name": "TicTacToe",
+    "description": "A game of TicTacToe.",
     "num_players": 2,
     "player_names": ["X", "O"] 
 }

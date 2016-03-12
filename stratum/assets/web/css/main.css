@@ -53,3 +53,25 @@ header nav a:hover {
     color: #FFD569;
     text-shadow: 0 0 1px #333;
 }
+
+.page-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.page-list li {
+    padding: 0 20px;
+    background: #B6E3F7;
+    border: 1px solid #5FB4D9;
+    border-radius: 10px;
+    box-shadow: 0 0 5px #333;
+}
+
+.page-list li h2 a {
+    color: black;
+}
+
+.page-list li h2 a:hover {
+    text-decoration: none;
+}
