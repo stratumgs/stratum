@@ -4,10 +4,14 @@
 
 {% block content %}
     <h1>Players</h1>
-
-    <ul class="page-list">
-        {% for player in players %}
-            <li>{{ player }}</li>
-        {% end %}
-    </ul>
+    
+    {% if players %}
+        <ul class="page-list">
+            {% for player in players %}
+                <li>{{ player }}</li>
+            {% end %}
+        </ul>
+    {% else %}
+        <p>No connected players.</p>
+    {% end %}
 {% end %}
