@@ -17,7 +17,7 @@ def init(port):
         os.path.dirname(os.path.realpath(__file__)),
         "..", "assets", "web")
     app = tornado.web.Application([
-        tornado.web.url(r"/", GamesHandler, name="main"),
+        tornado.web.url(r"/", HomeHandler, name="main"),
         tornado.web.url(r"/games", GamesHandler, name="games"),
         tornado.web.url(r"/games/([^/]+)/configure", ConfigureHandler, name="configure"),
         tornado.web.url(r"/games/([^/]+)/start", StartHandler, name="start"),
@@ -36,6 +36,12 @@ class LoggingHandler(tornado.web.RequestHandler):
         print("[{datetime}] {req.method} {req.uri} {req.version}".format(
             datetime=datetime.datetime.now().strftime("%m-%d-%Y %H:%M"),
             req=self.request))
+
+
+class HomeHandler(LoggingHandler):
+
+    def get(self):
+        self.render("home.html")
 
 
 class GamesHandler(LoggingHandler):
