@@ -14,6 +14,7 @@
                     <h2><a href="{{ reverse_url('view', game_runner.engine_name, match_id) }}">
                         {{ game_runner.engine_display_name }} {{ match_id }}
                     </a></h2>
+                    <p>Players: {{ ", ".join(p.name for p in game_runner.players) }}</p>
                 </li>
             {% end %}
         </ul>
