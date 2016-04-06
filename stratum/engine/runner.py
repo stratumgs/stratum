@@ -14,8 +14,8 @@ def init_engine_runner(engine, engine_name, players):
         return SocketEngineRunner(engine, engine_name, players)
 
 
-def _start_process(engine_constructor, players, view_connection):
-    engine = engine_constructor(players=players, view_connection=view_connection)
+def _start_process(engine_constructor, player_endpoints, view_connection):
+    engine = engine_constructor(players=player_endpoints, view_connection=view_connection)
     engine.run()
 
 
@@ -28,11 +28,13 @@ class BaseEngineRunner(object):
         self.engine_name = engine_name
         self.engine_display_name = stratum.games.get_game_configuration(engine_name)["display_name"]
         self.is_running = True
+        self.players = players
 
         view_connection = self.init_view_connection()
  
+        player_endpoints = [player.get_endpoints() for player in players]
         engine_process = multiprocessing.Process(target=_start_process,
-            args=(engine_constructor, players, view_connection))
+            args=(engine_constructor, player_endpoints, view_connection))
         engine_process.start()
 
         self.read_from_view_connection(b"\n", self._on_receive_state)
