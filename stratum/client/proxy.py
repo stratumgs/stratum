@@ -1,29 +1,11 @@
 import json
 import os
 
+import tornado.concurrent
 import tornado.ioloop
 import tornado.iostream
-import tornado.concurrent
+import tornado.netutil
 import tornado.tcpserver
-
-import stratum.client.util
-
-_CONNECTED_CLIENTS = {}
-
-_NAMELESS_CLIENT_NUMBER = 1
-
-
-def init(port):
-    client_server = ClientProxyServer()
-    client_server.listen(port)
-
-
-def get_connected_client_names():
-    return sorted(c.name for c in _CONNECTED_CLIENTS.values() if c.is_available)
-
-
-def get_connected_client(client_name):
-    return _CONNECTED_CLIENTS[client_name]
 
 
 def _make_pipe_pair():
@@ -34,33 +16,13 @@ def _make_pipe_pair():
 
 class ClientProxy(object):
 
-    def __init__(self, stream, address):
-
+    def __init__(self, name, stream):
+        self.name = name
         self.stream = stream
         self.helper = None
         self.is_available = True
 
-        def new_client(connect_message):
-            connect_message = json.loads(connect_message.decode().strip())
-
-            if connect_message["type"] != "connect":
-                print("Invalid message from client {}".format(address))
-                return
-
-            self.set_name(connect_message["payload"])
-
-            stream.write("{}\n".format(json.dumps({
-                "type": "name",
-                "payload": self.name
-            })).encode())
-
-            _CONNECTED_CLIENTS[self.name] = self
-
-            print("Client {} connected.".format(self.name))
-
         def stream_closed():
-            print("client {} died".format(self.name))
-            del _CONNECTED_CLIENTS[self.name]
             if self.helper:
                 self.helper.write_to_engine("{}\n".format(json.dumps({
                     "type": "close"
@@ -77,7 +39,6 @@ class ClientProxy(object):
                     return
             self.stream.read_until(b"\n", message_from_client)
 
-        stream.read_until(b"\n", new_client)
         self.stream.set_close_callback(stream_closed)
         self.stream.read_until(b"\n", message_from_client)
 
@@ -106,28 +67,6 @@ class ClientProxy(object):
         return endpoints
 
 
-    def set_name(self, name):
-        if name is None:
-            global _NAMELESS_CLIENT_NUMBER
-            name = "client-{}".format(_NAMELESS_CLIENT_NUMBER)
-            _NAMELESS_CLIENT_NUMBER += 1
-        elif name in _CONNECTED_CLIENTS:
-            n = 1
-            while True:
-                possible_name = "{}-{}".format(name, n)
-                if possible_name not in _CONNECTED_CLIENTS:
-                    name = possible_name
-                    break
-        self.name = name
-
-
-
-class ClientProxyServer(tornado.tcpserver.TCPServer):
-
-    def handle_stream(self, stream, address):
-        ClientProxy(stream, address)
-
-
 class PipeClientProxyHelper():
 
     def init_engine_connection_endpoints(self):
@@ -151,7 +90,7 @@ class PipeClientProxyHelper():
 class SocketClientProxyHelper():
 
     def init_engine_connection_endpoints(self):
-        self.connector_server = stratum.client.util.SingleClientServer()
+        self.connector_server = SingleClientServer()
         return self.connector_server.get_port()
 
     def close_engine_connection_endpoints(self):
@@ -170,3 +109,25 @@ class SocketClientProxyHelper():
         tornado.ioloop.IOLoop.current().add_future(
             self.connector_server.get_stream(),
             lambda s: s.result().read_until(delimeter, callback))
+
+
+class SingleClientServer(tornado.tcpserver.TCPServer):
+
+    def __init__(self):
+        super(SingleClientServer, self).__init__()
+        self._stream_future = tornado.concurrent.Future()
+        sockets = tornado.netutil.bind_sockets(0, '127.0.0.1')
+        self._port = sockets[0].getsockname()[1]
+        self.add_sockets(sockets)
+        print(sockets)
+
+    def get_port(self):
+        return self._port
+
+    def handle_stream(self, stream, address):
+        if not self._stream_future.done():
+            self._stream_future.set_result(stream)
+        self.io_loop.add_callback(lambda: self.stop())
+
+    def get_stream(self):
+        return self._stream_future

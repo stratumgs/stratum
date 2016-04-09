@@ -7,7 +7,7 @@ import tornado.httpserver
 import tornado.ioloop
 
 import stratum.game.games
-import stratum.client.client
+import stratum.client.server
 
 
 def init(port):
@@ -55,7 +55,7 @@ class GamesHandler(LoggingHandler):
 class ConfigureHandler(LoggingHandler):
 
     def get(self, game):
-        players = stratum.client.client.get_connected_client_names()
+        players = stratum.client.server.get_connected_client_names()
         config = stratum.game.games.get_game_configuration(game)
         self.render("configure.html", players=players, game_name=game, config=config)
 
@@ -106,5 +106,5 @@ class MatchesHandler(LoggingHandler):
 class PlayersHandler(LoggingHandler):
 
     def get(self):
-        players = stratum.client.client.get_connected_client_names()
+        players = stratum.client.server.get_connected_client_names()
         self.render("players.html", players=players)

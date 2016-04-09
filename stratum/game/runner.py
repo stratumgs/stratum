@@ -5,9 +5,9 @@ import os
 import tornado.ioloop
 
 import tornado.iostream
+import stratum.client.proxy
 
 import stratum.game.games
-import stratum.client.util
 
 
 def init_engine_runner(engine, engine_name, players):
@@ -79,7 +79,7 @@ class PipeEngineRunner(BaseEngineRunner):
 class SocketEngineRunner(BaseEngineRunner):
 
     def init_view_connection(self):
-        self.connector_server = stratum.client.util.SingleClientServer()
+        self.connector_server = stratum.client.proxy.SingleClientServer()
         return self.connector_server.get_port()
 
     def read_from_view_connection(self, delimiter, callback):
