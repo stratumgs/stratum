@@ -1,6 +1,7 @@
-from .client import init_engine_client
 import json
 import sys
+
+from .client import init_engine_client
 
 
 class BaseEngine(object):
