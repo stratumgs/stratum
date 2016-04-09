@@ -1,21 +1,22 @@
 import datetime
-import json
 import os
-import stratum.games
-import stratum.servers.client
+
 import tornado.web
 import tornado.websocket
 import tornado.httpserver
 import tornado.ioloop
 
+import stratum.game.games
+import stratum.client.client
+
 
 def init(port):
     template_path = os.path.join(
         os.path.dirname(os.path.realpath(__file__)),
-        "..", "assets", "templates")
+        "assets", "templates")
     static_files_path = os.path.join(
         os.path.dirname(os.path.realpath(__file__)),
-        "..", "assets", "web")
+        "assets", "web")
     app = tornado.web.Application([
         tornado.web.url(r"/", HomeHandler, name="main"),
         tornado.web.url(r"/games", GamesHandler, name="games"),
@@ -47,15 +48,15 @@ class HomeHandler(LoggingHandler):
 class GamesHandler(LoggingHandler):
 
     def get(self):
-        games = stratum.games.get_available_game_engines()
+        games = stratum.game.games.get_available_game_engines()
         self.render("games.html", games=games)
 
 
 class ConfigureHandler(LoggingHandler):
 
     def get(self, game):
-        players = stratum.servers.client.get_connected_client_names()
-        config = stratum.games.get_game_configuration(game)
+        players = stratum.client.client.get_connected_client_names()
+        config = stratum.game.games.get_game_configuration(game)
         self.render("configure.html", players=players, game_name=game, config=config)
 
 
@@ -63,7 +64,7 @@ class StartHandler(LoggingHandler):
 
     def post(self, game):
         player_ids = self.get_arguments("players")
-        game_id = stratum.games.init_game_engine(game, player_ids=player_ids)
+        game_id = stratum.game.games.init_game_engine(game, player_ids=player_ids)
         self.redirect("/games/tictactoe/view/{}".format(game_id))
 
 
@@ -78,7 +79,7 @@ class ViewSocketHandler(tornado.websocket.WebSocketHandler):
 
     def open(self, game, game_id):
         self.is_open = True
-        stratum.games.get_game_runner(int(game_id)).add_view(self)
+        stratum.game.games.get_game_runner(int(game_id)).add_view(self)
 
     def on_close(self):
         self.is_open = False
@@ -90,7 +91,7 @@ class ViewSocketHandler(tornado.websocket.WebSocketHandler):
 class MatchesHandler(LoggingHandler):
 
     def get(self):
-        all_matches = stratum.games.get_current_games()
+        all_matches = stratum.game.games.get_current_games()
         active_matches = []
         inactive_matches = []
         for match in all_matches:
@@ -105,5 +106,5 @@ class MatchesHandler(LoggingHandler):
 class PlayersHandler(LoggingHandler):
 
     def get(self):
-        players = stratum.servers.client.get_connected_client_names()
+        players = stratum.client.client.get_connected_client_names()
         self.render("players.html", players=players)

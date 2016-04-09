@@ -1,10 +1,13 @@
 import json
 import multiprocessing
 import os
-import stratum.games
-import stratum.util
+
 import tornado.ioloop
+
 import tornado.iostream
+
+import stratum.game.games
+import stratum.client.util
 
 
 def init_engine_runner(engine, engine_name, players):
@@ -26,7 +29,7 @@ class BaseEngineRunner(object):
         self._connected_views = []
 
         self.engine_name = engine_name
-        self.engine_display_name = stratum.games.get_game_configuration(engine_name)["display_name"]
+        self.engine_display_name = stratum.game.games.get_game_configuration(engine_name)["display_name"]
         self.is_running = True
         self.players = players
 
@@ -76,7 +79,7 @@ class PipeEngineRunner(BaseEngineRunner):
 class SocketEngineRunner(BaseEngineRunner):
 
     def init_view_connection(self):
-        self.connector_server = stratum.util.SingleClientServer()
+        self.connector_server = stratum.client.util.SingleClientServer()
         return self.connector_server.get_port()
 
     def read_from_view_connection(self, delimiter, callback):

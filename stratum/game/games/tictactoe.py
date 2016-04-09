@@ -1,4 +1,4 @@
-import stratum.engine
+import stratum.game.engine
 
 
 CONFIG = {
@@ -17,7 +17,7 @@ def _get_first_if_all_equal(lst):
     return first
 
 
-class Engine(stratum.engine.BaseEngine):
+class Engine(stratum.game.engine.BaseEngine):
     
     def __init__(self, players=[], view_connection=None):
         super(Engine, self).__init__(players=players, view_connection=view_connection)

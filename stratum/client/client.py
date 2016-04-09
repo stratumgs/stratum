@@ -1,10 +1,12 @@
 import json
 import os
-import stratum.util
+
 import tornado.ioloop
 import tornado.iostream
 import tornado.concurrent
 import tornado.tcpserver
+
+import stratum.client.util
 
 _CONNECTED_CLIENTS = {}
 
@@ -149,7 +151,7 @@ class PipeClientProxyHelper():
 class SocketClientProxyHelper():
 
     def init_engine_connection_endpoints(self):
-        self.connector_server = stratum.util.SingleClientServer()
+        self.connector_server = stratum.client.util.SingleClientServer()
         return self.connector_server.get_port()
 
     def close_engine_connection_endpoints(self):
