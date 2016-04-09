@@ -1,5 +1,4 @@
-import stratum.game.engine
-
+from ..engine import BaseEngine
 
 CONFIG = {
     "display_name": "TicTacToe",
@@ -17,7 +16,7 @@ def _get_first_if_all_equal(lst):
     return first
 
 
-class Engine(stratum.game.engine.BaseEngine):
+class Engine(BaseEngine):
     
     def __init__(self, players=[], view_connection=None):
         super(Engine, self).__init__(players=players, view_connection=view_connection)

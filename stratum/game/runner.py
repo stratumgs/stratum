@@ -7,7 +7,7 @@ import tornado.ioloop
 import tornado.iostream
 import stratum.client.proxy
 
-import stratum.game.games
+import stratum.game
 
 
 def init_engine_runner(engine, engine_name, players):
@@ -29,7 +29,7 @@ class BaseEngineRunner(object):
         self._connected_views = []
 
         self.engine_name = engine_name
-        self.engine_display_name = stratum.game.games.get_game_configuration(engine_name)["display_name"]
+        self.engine_display_name = stratum.game.get_game_configuration(engine_name)["display_name"]
         self.is_running = True
         self.players = players
 
