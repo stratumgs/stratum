@@ -10,11 +10,11 @@ import stratum.client.proxy
 import stratum.game
 
 
-def init_engine_runner(engine, engine_name, players):
+def init_engine_runner(game_id, engine, engine_name, players):
     if os.name == "posix":
-        return PipeEngineRunner(engine, engine_name, players)
+        return PipeEngineRunner(game_id, engine, engine_name, players)
     else:
-        return SocketEngineRunner(engine, engine_name, players)
+        return SocketEngineRunner(game_id, engine, engine_name, players)
 
 
 def _start_process(engine_constructor, player_endpoints, view_connection):
@@ -24,7 +24,7 @@ def _start_process(engine_constructor, player_endpoints, view_connection):
 
 class BaseEngineRunner(object):
 
-    def __init__(self, engine_constructor, engine_name, players):
+    def __init__(self, game_id, engine_constructor, engine_name, players):
         self._last_state = None
         self._connected_views = []
 
@@ -35,7 +35,7 @@ class BaseEngineRunner(object):
 
         view_connection = self.init_view_connection()
  
-        player_endpoints = [player.get_endpoints() for player in players]
+        player_endpoints = [player.create_endpoints_for_game(game_id) for player in players]
         engine_process = multiprocessing.Process(target=_start_process,
             args=(engine_constructor, player_endpoints, view_connection))
         engine_process.start()

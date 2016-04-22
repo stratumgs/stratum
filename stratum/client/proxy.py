@@ -16,53 +16,72 @@ def _make_pipe_pair():
 
 class ClientProxy(object):
 
-    def __init__(self, name, stream):
+    def __init__(self, name, max_games, stream):
         self.name = name
+        self.max_games = max_games
+        self.games_available = max_games
         self.stream = stream
-        self.helper = None
-        self.is_available = True
+        self.helpers = {}
 
         def stream_closed():
-            if self.helper:
-                self.helper.write_to_engine("{}\n".format(json.dumps({
+            for helper in self.helpers.values():
+                helper.write_to_engine("{}\n".format(json.dumps({
                     "type": "close"
                 })).encode())
-                self.helper.close_engine_connection_endpoints()
+                helper.close_engine_connection_endpoints()
 
         def message_from_client(msg):
-            if self.helper:
-                self.helper.write_to_engine(msg)
-                obj = json.loads(msg.decode().strip())
-                if obj["type"] == "close":
-                    self.stream.close()
-                    self.helper.close_engine_connection_endpoints()
-                    return
+            obj = json.loads(msg.decode().strip())
+            if obj["type"] == "close":
+                self.stream.close()
+                return
+            if obj["game_id"] in self.helpers:
+                self.helpers[obj["game_id"]].write_to_engine(msg)
             self.stream.read_until(b"\n", message_from_client)
 
         self.stream.set_close_callback(stream_closed)
         self.stream.read_until(b"\n", message_from_client)
 
+    def is_available(self):
+        return self.games_available > 0
 
-    def get_endpoints(self):
-        self.is_available = False
+    def create_endpoints_for_game(self, game_id):
+        self.games_available -= 1
 
         if os.name == "posix":
-            self.helper = PipeClientProxyHelper()
+            helper = PipeClientProxyHelper()
         else:
-            self.helper = SocketClientProxyHelper()
+            helper = SocketClientProxyHelper()
+
+        self.helpers[game_id] = helper
 
         def message_from_engine(msg):
-            self.stream.write(msg)
+            # decode object and inject game id
             obj = json.loads(msg.decode().strip())
+            obj["game_id"] = game_id
+
+            # encode and write object to client
+            self.stream.write("{}\n".format(json.dumps(obj)).encode())
+
+            # if engine closing connection, clean up endpoints,
+            # make game available, and return
             if obj["type"] == "close":
-                self.stream.close()
-                self.helper.close_engine_connection_endpoints()
+                helper.close_engine_connection_endpoints()
+                del self.helpers[game_id]
+                self.games_available += 1
                 return
-            self.helper.read_from_engine(b"\n", message_from_engine)
 
-        endpoints = self.helper.init_engine_connection_endpoints()
+            # read from the engine stream again
+            helper.read_from_engine(b"\n", message_from_engine)
 
-        self.helper.read_from_engine(b"\n", message_from_engine)
+        endpoints = helper.init_engine_connection_endpoints()
+
+        helper.read_from_engine(b"\n", message_from_engine)
+
+        self.stream.write("{}\n".format(json.dumps({
+            "type": "start",
+            "game_id": game_id
+        })).encode())
 
         return endpoints
 

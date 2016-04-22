@@ -8,7 +8,7 @@
     {% if players %}
         <ul class="page-list">
             {% for player in players %}
-                <li>{{ player }}</li>
+                <li>{{ player.name }} ({{ player.games_available }}/{{ player.max_games }} available)</li>
             {% end %}
         </ul>
     {% else %}

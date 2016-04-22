@@ -15,8 +15,12 @@ def init(port):
     client_server.listen(port)
 
 
-def get_connected_client_names():
-    return sorted(c.name for c in _CONNECTED_CLIENTS.values() if c.is_available)
+def get_available_client_names():
+    return sorted(c.name for c in _CONNECTED_CLIENTS.values() if c.is_available())
+
+
+def get_connected_clients():
+    return sorted(_CONNECTED_CLIENTS.values(), key=lambda c: c.name)
 
 
 def get_connected_client(client_name):
@@ -66,14 +70,19 @@ class ClientProxyServer(tornado.tcpserver.TCPServer):
             connect_message = json.loads(connect_message.decode().strip())
 
             if connect_message["type"] != "connect":
-                print("Invalid message from client {}".format(address))
+                print("Invalid message type from client {}".format(address))
                 return
 
-            name = self._negotiate_name(connect_message["payload"])
+            name = self._negotiate_name(connect_message["name"])
+            try:
+                max_games = int(connect_message["max_games"])
+            except ValueError:
+                print("Invalid max_games parameter from client {}".format(address))
+                return
 
             stream.write("{}\n".format(json.dumps({
                 "type": "name",
-                "payload": name
+                "name": name
             })).encode())
 
             stream_proxy = StreamProxy(stream)
@@ -85,7 +94,7 @@ class ClientProxyServer(tornado.tcpserver.TCPServer):
 
             stream.set_close_callback(stream_closed)
 
-            _CONNECTED_CLIENTS[name] = stratum.client.proxy.ClientProxy(name, stream_proxy)
+            _CONNECTED_CLIENTS[name] = stratum.client.proxy.ClientProxy(name, max_games, stream_proxy)
 
             print("Client {} connected.".format(name))
 

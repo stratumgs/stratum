@@ -55,7 +55,7 @@ class GamesHandler(LoggingHandler):
 class ConfigureHandler(LoggingHandler):
 
     def get(self, game):
-        players = stratum.client.server.get_connected_client_names()
+        players = stratum.client.server.get_available_client_names()
         config = stratum.game.get_game_configuration(game)
         self.render("configure.html", players=players, game_name=game, config=config)
 
@@ -106,5 +106,5 @@ class MatchesHandler(LoggingHandler):
 class PlayersHandler(LoggingHandler):
 
     def get(self):
-        players = stratum.client.server.get_connected_client_names()
+        players = stratum.client.server.get_connected_clients()
         self.render("players.html", players=players)
