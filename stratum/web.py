@@ -1,3 +1,9 @@
+"""
+.. module stratum.web
+
+The web server for stratum.
+"""
+
 import datetime
 import os
 
@@ -11,6 +17,13 @@ import stratum.client.server
 
 
 def init(port):
+    """
+        Initialize the web server.
+
+        :param port: The web server port.
+        :type port: int
+   """
+
     template_path = os.path.join(
         os.path.dirname(os.path.realpath(__file__)),
         "assets", "templates")
@@ -33,6 +46,11 @@ def init(port):
 
 
 class LoggingHandler(tornado.web.RequestHandler):
+    """
+        Base class for all request handlers. Logs the time, method, uri, and
+        HTTP version to the console for each request.
+    """
+
     def prepare(self):
         print("[{datetime}] {req.method} {req.uri} {req.version}".format(
             datetime=datetime.datetime.now().strftime("%m-%d-%Y %H:%M"),
@@ -40,12 +58,18 @@ class LoggingHandler(tornado.web.RequestHandler):
 
 
 class HomeHandler(LoggingHandler):
+    """
+        Renders the home page.
+    """
 
     def get(self):
         self.render("home.html")
 
 
 class GamesHandler(LoggingHandler):
+    """
+        Lists the available games to play.
+    """
 
     def get(self):
         games = stratum.game.get_available_game_engines()
@@ -53,6 +77,9 @@ class GamesHandler(LoggingHandler):
 
 
 class ConfigureHandler(LoggingHandler):
+    """
+        Displays a configuration screen to configure a new game.
+    """
 
     def get(self, game):
         players = stratum.client.server.get_available_client_names()
@@ -61,6 +88,9 @@ class ConfigureHandler(LoggingHandler):
 
 
 class StartHandler(LoggingHandler):
+    """
+        Starts a new game.
+    """
 
     def post(self, game):
         player_ids = self.get_arguments("players")
@@ -69,6 +99,9 @@ class StartHandler(LoggingHandler):
 
 
 class ViewHandler(LoggingHandler):
+    """
+        Displays a game.
+    """
 
     def get(self, game, gid):
         game_template = self.render_string("games/{}.html".format(game))
@@ -76,6 +109,9 @@ class ViewHandler(LoggingHandler):
 
 
 class ViewSocketHandler(tornado.websocket.WebSocketHandler):
+    """
+        Handles websocket connections for viewing games.
+    """
 
     def open(self, game, game_id):
         self.is_open = True
@@ -89,6 +125,9 @@ class ViewSocketHandler(tornado.websocket.WebSocketHandler):
 
 
 class MatchesHandler(LoggingHandler):
+    """
+        Displays current matches.
+    """
 
     def get(self):
         all_matches = stratum.game.get_current_games()
@@ -104,6 +143,9 @@ class MatchesHandler(LoggingHandler):
 
 
 class PlayersHandler(LoggingHandler):
+    """
+        List currently connected players.
+    """
 
     def get(self):
         players = stratum.client.server.get_connected_clients()

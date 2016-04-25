@@ -7,6 +7,11 @@ each other.
 Documentation
 -------------
 
+.. toctree::
+   :maxdepth: 2
+
+   api/stratum/web
+
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
