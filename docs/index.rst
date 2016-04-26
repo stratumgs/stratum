@@ -10,6 +10,7 @@ Documentation
 .. toctree::
    :maxdepth: 2
 
+   api/stratum/client/server
    api/stratum/web
 
 * :ref:`genindex`

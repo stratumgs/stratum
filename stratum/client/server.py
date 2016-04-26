@@ -1,3 +1,9 @@
+"""
+.. module stratum.client.server
+
+The client server for stratum.
+"""
+
 import json
 
 import tornado.ioloop
@@ -11,23 +17,54 @@ _CONNECTED_CLIENTS = {}
 
 
 def init(port):
+    """
+        Initialize the client server.
+
+        :param port: The client server port.
+        :type port: int
+    """
+
     client_server = ClientProxyServer()
     client_server.listen(port)
 
 
 def get_available_client_names():
+    """
+        Get a list of the names of the clients currently connected to the server
+        with available game slots.
+    """
+
     return sorted(c.name for c in _CONNECTED_CLIENTS.values() if c.is_available())
 
 
 def get_connected_clients():
+    """
+        Get a list of all currently connected clients.
+    """
+
     return sorted(_CONNECTED_CLIENTS.values(), key=lambda c: c.name)
 
 
 def get_connected_client(client_name):
+    """
+        Get a connected client by name.
+
+        :param client_name: The name of the client.
+        :type client_name: string
+    """
+
     return _CONNECTED_CLIENTS[client_name]
 
 
 class StreamProxy(object):
+    """
+        A proxy for :class:`tornado.iostream.IOStream`. It only provides some
+        methods of ``IOStream``, as follows: ``write``, ``read_until``,
+        ``set_close_callback``, ``close``.
+
+        :param stream: The stream to proxy.
+        :type stream: :class:`tornado.iostream.IOStream`
+    """
 
     def __init__(self, stream):
         self._stream = stream
@@ -47,11 +84,29 @@ class StreamProxy(object):
 
 
 class ClientProxyServer(tornado.tcpserver.TCPServer):
+    """
+        Listens for new clients and connects them.
+    """
 
     _NAMELESS_CLIENT_NUMBER = 1
 
     @classmethod
     def _negotiate_name(cls, name):
+        """
+            Private helper method used to determine a unique client name,
+            possibly given a name as a starting point.
+
+            If given name is unique among the currently connected client, then
+            this method returns that. If it isn't, appends a number to it to
+            make it unique. If the name provided is ``None``, creates a new name
+            of the form ``name-#`` where ``#`` is a number that makes the name
+            unique.
+
+            :param name: The name.
+            :type name: string
+            :returns: A unique name for the client.
+        """
+
         if name is None:
             name = "client-{}".format(cls._NAMELESS_CLIENT_NUMBER)
             cls._NAMELESS_CLIENT_NUMBER += 1
