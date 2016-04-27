@@ -16,8 +16,6 @@ Functions
 Classes
 -------
 
-hello
-
 .. autoclass:: ClientProxyServer
     :members:
     :private-members:
