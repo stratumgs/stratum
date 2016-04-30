@@ -9,5 +9,6 @@ API Documentation
    api/stratum/game
    api/stratum/game/engine
    api/stratum/game/engine/client
+   api/stratum/game/games/tictactoe
    api/stratum/game/runner
    api/stratum/web
