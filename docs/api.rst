@@ -8,5 +8,6 @@ API Documentation
    api/stratum/client/server
    api/stratum/game
    api/stratum/game/engine
+   api/stratum/game/engine/client
    api/stratum/game/runner
    api/stratum/web
