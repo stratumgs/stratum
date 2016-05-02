@@ -26,6 +26,7 @@ Documentation
    :maxdepth: 2
 
    design
+   protocols
    code
 
 * :ref:`genindex`
