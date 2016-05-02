@@ -8,8 +8,9 @@ There are four main components to Stratum: the web server, the client server,
 the clients, and the game engines. The web server handles requests from the
 browser, and it is what spawns new game engines, which run as separate processes
 on the host machine. The client server handles clients that are connected, and
-proxies the connections to those clients for the game engine. The clients are
-the autonomous players in the game.
+proxies the connections to those clients for the game engine. The clients
+remotely connect from a user's machine, and are the autonomous players in the
+game.
 
 
 Web Server
@@ -49,11 +50,12 @@ use pipes asynchronously on Windows, sockets are available as a backup.
 Clients
 -------
 
-Clients are the players in the game. The are typically implemented using a base
-library, which handles the details of the communication protocol with the
-server, as well as running of the main loop. While clients are intended to be
-autonomous, a client that takes input from the user could be implemented, as a
-way to manually play against other autonomous systems.
+Clients are the players in the game, and they remotely connect from a user's
+machine. They are typically implemented using a base library, which handles the
+details of the communication protocol with the server, as well as running of the
+main loop. While clients are intended to be autonomous, a client that takes
+input from the user could be implemented, as a way to manually play against
+other autonomous systems.
 
 
 Game Engines
