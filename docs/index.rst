@@ -10,7 +10,7 @@ Documentation
 .. toctree::
    :maxdepth: 2
 
-   api
+   code
 
 * :ref:`genindex`
 * :ref:`modindex`
