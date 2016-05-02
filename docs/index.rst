@@ -10,6 +10,7 @@ Documentation
 .. toctree::
    :maxdepth: 2
 
+   design
    code
 
 * :ref:`genindex`
