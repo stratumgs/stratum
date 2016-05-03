@@ -13,7 +13,8 @@ limited).
 
 The main components are the primary server, which consists of a web
 server and tcp server, the clients, and the game engines. More information about
-how these parts interact can be found on the :doc:`design` page.
+how these parts interact can be found on the :doc:`design` page. Information
+about which games are available can be found on the :doc:`engines` page.
 
 The main server is written using the asynchronous Python server Tornado. More
 information about Tornado can be found on the project's official website:
@@ -27,6 +28,7 @@ Documentation
 
    design
    protocols
+   engines
    code
 
 * :ref:`genindex`
