@@ -8,3 +8,8 @@ However, in order to accommodate this flexibility, much freedom is given in the
 design and implementation of the game engines. This section documents each of
 the games built in to the system, including information such as how many players
 are supported, and the protocol the client is expected to implement.
+
+.. toctree::
+    :maxdepth: 2
+
+    engines/tictactoe
