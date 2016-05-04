@@ -20,6 +20,9 @@ The main server is written using the asynchronous Python server Tornado. More
 information about Tornado can be found on the project's official website:
 `<http://www.tornadoweb.org/en/stable/>`_.
 
+Stratum is licensed under the
+`MIT License <https://opensource.org/licenses/MIT>`_.
+
 Documentation
 -------------
 
