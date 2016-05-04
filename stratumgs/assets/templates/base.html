@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Title{% end %}</title>
+
+    <link rel="stylesheet" href="{{ reverse_url('static', 'css/main.css') }}">
+
+    {% block head %}{% end %}
+</head>
+<body>
+
+    <header>
+        <div class="wrapper">
+            <h1><a href="{{ reverse_url('main') }}">STRATUMGS</a></h1>
+            <nav>
+                <a href="{{ reverse_url('games') }}">Games</a>
+                <a href="{{ reverse_url('matches') }}">Matches</a>
+                <a href="{{ reverse_url('players') }}">Players</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        {% block content %}{% end %}
+    </div>
+</body>
+</html>

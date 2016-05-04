@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Configure New Game - StratumGS{% end %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ reverse_url('static', 'css/configure.css') }}">
+{% end %}
+
+{% block content %}
+    <h1>Configure</h1>
+    <p>Configure a new game of {{ config["display_name"] }}.</p>
+    <form method="post" action="{{ reverse_url('start', game_name) }}">
+        {% for i in range(config["num_players"]) %}
+            <p>
+                <label for="player-{{ i }}">
+                    Player {{ config["player_names"][i] if i < len(config["player_names"]) else i + 1 }}
+                </label>
+                <select id="player-{{ i }}" name="players">
+                    <option>Choose Player</option>
+                    {% for player in players %}
+                        <option>{{ player }}</option>
+                    {% end %}
+                </select>
+            </p>
+        {% end %}
+        <p>
+            <input type="submit" value="Play!">
+        </p>
+    </form>
+{% end %}

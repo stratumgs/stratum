@@ -96,9 +96,9 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/Stratum.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/StratumGS.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/Stratum.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/StratumGS.qhc"
 
 .PHONY: applehelp
 applehelp:
@@ -115,8 +115,8 @@ devhelp:
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/Stratum"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/Stratum"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/StratumGS"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/StratumGS"
 	@echo "# devhelp"
 
 .PHONY: epub

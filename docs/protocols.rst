@@ -1,7 +1,7 @@
 Protocols
 =========
 
-Stratum very heavily relies on network communication to enable clients to play
+StratumGS very heavily relies on network communication to enable clients to play
 games against each other. This makes the protocol used to communicate an
 important part of the design. There are two primary parts to the protocol:
 messages intended for the management infrastructure, and messages intended for

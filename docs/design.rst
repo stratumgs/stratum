@@ -1,10 +1,10 @@
 Design
 ======
 
-This page provides a general overview of the structure of Stratum and how the
+This page provides a general overview of the structure of StratumGS and how the
 various elements interact.
 
-There are four main components to Stratum: the web server, the client server,
+There are four main components to StratumGS: the web server, the client server,
 the clients, and the game engines. The web server handles requests from the
 browser, and it is what spawns new game engines, which run as separate processes
 on the host machine. The client server handles clients that are connected, and

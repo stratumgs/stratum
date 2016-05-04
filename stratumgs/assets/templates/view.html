@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}View Game - StratumGS{% end %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ reverse_url('static', 'games/{}/game.css'.format(game_name)) }}">
+{% end %}
+
+{% block content %}
+    <h1>View</h1>
+    <p>Viewing game.</p>
+    <a href="{{ reverse_url('main') }}">Home</a>
+
+    {% raw game_template %}
+    <script>
+        var StratumGSView = {
+            onstate: function() {
+                throw new Error("StratumGSView.onstate should be implemented.");
+            }
+        };
+    </script>
+    <script src="{{ reverse_url('static', 'games/{}/game.js'.format(game_name)) }}"></script>
+    <script src="{{ reverse_url('static', 'js/view.js') }}"></script>
+{% end %}

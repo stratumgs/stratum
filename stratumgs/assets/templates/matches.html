@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Matches - StratumGS{% end %}
+
+{% block content %}
+    <h1>Matches</h1>
+
+    {% if active_matches %}
+        <h2>Active Matches</h2>
+
+        <ul class="page-list">
+            {% for match_id, game_runner in active_matches %}
+                <li>
+                    <h2><a href="{{ reverse_url('view', game_runner.engine_name, match_id) }}">
+                        {{ game_runner.engine_display_name }} {{ match_id }}
+                    </a></h2>
+                    <p>Players: {{ ", ".join(p.name for p in game_runner.players) }}</p>
+                </li>
+            {% end %}
+        </ul>
+    {% else %}
+        <p>No active matches.</p>
+    {% end %}
+
+    {% if inactive_matches %}
+        <h2>Inactive Matches</h2>
+
+        <ul class="page-list">
+            {% for match_id, game_runner in inactive_matches %}
+                <li>
+                    <h2><a href="{{ reverse_url('view', game_runner.engine_name, match_id) }}">
+                        {{ game_runner.engine_display_name }} {{ match_id }}
+                    </a></h2>
+                </li>
+            {% end %}
+        </ul>
+    {% else %}
+        <p>No inactive matches.</p>
+    {% end %}
+{% end %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Players - StratumGS{% end %}
+
+{% block content %}
+    <h1>Players</h1>
+    
+    {% if players %}
+        <ul class="page-list">
+            {% for player in players %}
+                <li>{{ player.name }} ({{ player.games_available }}/{{ player.max_games }} available)</li>
+            {% end %}
+        </ul>
+    {% else %}
+        <p>No connected players.</p>
+    {% end %}
+{% end %}

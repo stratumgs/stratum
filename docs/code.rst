@@ -1,14 +1,14 @@
 Code Documentation
-=================
+==================
 
 .. toctree::
    :maxdepth: 2
 
-   code/stratum.client.proxy
-   code/stratum.client.server
-   code/stratum.game
-   code/stratum.game.engine
-   code/stratum.game.engine.client
-   code/stratum.game.games.tictactoe
-   code/stratum.game.runner
-   code/stratum.web
+   code/stratumgs.client.proxy
+   code/stratumgs.client.server
+   code/stratumgs.game
+   code/stratumgs.game.engine
+   code/stratumgs.game.engine.client
+   code/stratumgs.game.games.tictactoe
+   code/stratumgs.game.runner
+   code/stratumgs.web

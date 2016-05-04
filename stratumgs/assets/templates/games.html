@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Games - StratumGS{% end %}
+
+{% block content %}
+    <h1>Games</h1>
+
+    <ul class="page-list">
+        {% for game_name, game_config in games %}
+            <li>
+                <h2><a href="{{ reverse_url('configure', game_name) }}">{{ game_config["display_name"] }}</a></h2>
+                <p>{{ game_config["description"] }}</p>
+            </li>
+        {% end %}
+    </ul>
+{% end %}
