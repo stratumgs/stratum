@@ -82,7 +82,7 @@ class ConfigureHandler(LoggingHandler):
     """
 
     def get(self, game):
-        players = stratumgs.client.server.get_available_client_names()
+        players = stratumgs.client.server.get_available_client_names_for_game(game)
         config = stratumgs.game.get_game_configuration(game)
         self.render("configure.html", players=players, game_name=game, config=config)
 

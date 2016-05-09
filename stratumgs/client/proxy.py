@@ -13,6 +13,8 @@ import tornado.iostream
 import tornado.netutil
 import tornado.tcpserver
 
+import stratumgs.game
+
 
 def _make_pipe_pair():
     """
@@ -38,12 +40,21 @@ class ClientProxy(object):
         :type stream: :class:`tornado.iostream.IOStream`
     """
 
-    def __init__(self, name, max_games, stream):
+    def __init__(self, name, supported_games, max_games, stream):
         self.name = name
+        self.supported_games = supported_games
         self.max_games = max_games
         self.games_available = max_games
         self.stream = stream
         self.helpers = {}
+
+        self.supported_games_display = []
+        for game in supported_games:
+            try:
+                self.supported_games_display.append(
+                    stratumgs.game.get_game_configuration(game)["display_name"])
+            except: pass
+        self.supported_games_display.sort()
 
         def stream_closed():
             for helper in self.helpers.values():

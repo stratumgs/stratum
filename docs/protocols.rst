@@ -38,6 +38,7 @@ Tells the client it has been included in a new game that has been started, so
 that it can initialize the object needed to play the game.
 
 - **type**: ``"start"``
+- **game_name**: The name of the game to start.
 - **game_id**: The integer id of the new game.
 
 Message
@@ -66,6 +67,7 @@ Sent when the client first connects. Provides the server with information about
 the client.
 
 - **type**: ``"connect"``
+- **supported_games**: A list of games that the client is capable of playing.
 - **max_games**: An integer giving the maximum number of simultaneous games the
   client can support.
 - **name**: The name the client would like to use to identify itself. If the

@@ -28,13 +28,16 @@ def init(port):
     client_server.listen(port)
 
 
-def get_available_client_names():
+def get_available_client_names_for_game(game):
     """
         Get a list of the names of the clients currently connected to the server
         with available game slots.
+
+        :param game: The game that the clients need to support.
+        :type game: string
     """
 
-    return sorted(c.name for c in _CONNECTED_CLIENTS.values() if c.is_available())
+    return sorted(c.name for c in _CONNECTED_CLIENTS.values() if c.is_available() and game in c.supported_games)
 
 
 def get_connected_clients():
@@ -134,6 +137,7 @@ class ClientProxyServer(tornado.tcpserver.TCPServer):
             except ValueError:
                 print("Invalid max_games parameter from client {}".format(address))
                 return
+            supported_games = connect_message["supported_games"]
 
             stream.write("{}\n".format(json.dumps({
                 "type": "name",
@@ -149,7 +153,7 @@ class ClientProxyServer(tornado.tcpserver.TCPServer):
 
             stream.set_close_callback(stream_closed)
 
-            _CONNECTED_CLIENTS[name] = stratumgs.client.proxy.ClientProxy(name, max_games, stream_proxy)
+            _CONNECTED_CLIENTS[name] = stratumgs.client.proxy.ClientProxy(name, supported_games, max_games, stream_proxy)
 
             print("Client {} connected.".format(name))
 

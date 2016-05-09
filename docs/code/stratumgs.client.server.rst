@@ -8,7 +8,7 @@ Functions
 ---------
 
 .. autofunction:: init
-.. autofunction:: get_available_client_names
+.. autofunction:: get_available_client_names_for_game
 .. autofunction:: get_connected_clients
 .. autofunction:: get_connected_client
 

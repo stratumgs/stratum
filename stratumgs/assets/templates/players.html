@@ -8,7 +8,11 @@
     {% if players %}
         <ul class="page-list">
             {% for player in players %}
-                <li>{{ player.name }} ({{ player.games_available }}/{{ player.max_games }} available)</li>
+                <li>
+                    <h2>{{ player.name }}</h2>
+                    <p>Supported Games: {{ ", ".join(player.supported_games_display) }}</p>
+                    <p>{{ player.games_available }}/{{ player.max_games }} games available.</p>
+                </li>
             {% end %}
         </ul>
     {% else %}
