@@ -30,6 +30,7 @@ Documentation
    :maxdepth: 2
 
    design
+   guides
    protocols
    engines
    code
