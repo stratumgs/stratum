@@ -1,7 +1,10 @@
 from setuptools import setup, find_packages
 
+import stratumgs
+
+
 setup(name='stratumgs',
-      version='0.1',
+      version=stratumgs.version,
       description='A turn based game engine designed to pit autonomous players against each other.',
       keywords=['stratumgs'],
       url='https://github.com/stratumgs/stratumgs',
