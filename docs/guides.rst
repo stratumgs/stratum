@@ -8,3 +8,4 @@ Server.
     :maxdepth: 2
 
     guides/engine
+    guides/client
