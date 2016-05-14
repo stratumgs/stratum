@@ -1,5 +1,5 @@
-Client
-======
+Creating a Client
+=================
 
 Clients are the players in the games. They are run on a user's machine, and
 communicate to the server over a network connection. Implementing a client to
