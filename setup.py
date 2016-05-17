@@ -26,7 +26,8 @@ setup(name="stratumgs",
       entry_points={
             "console_scripts": ["stratumgs=stratumgs:main"]
       },
-      keywords=["stratumgs"],
+      keywords=["stratumgs", "stratum", "game", "server", "turn", "based",
+                "board", "ai", "autonomous", "tictactoe"],
       url="https://stratumgs.org",
       author="David Korhumel",
       author_email="dpk2442@gmail.com",
