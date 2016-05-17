@@ -4,13 +4,14 @@ import stratumgs
 
 
 def readme():
-      with open('README.rst') as f:
-            return f.read()
+    with open('README.rst') as f:
+        return f.read()
 
 
 setup(name='stratumgs',
       version=stratumgs.version,
-      description='A turn based game engine designed to pit autonomous players against each other.',
+      description='A turn based game engine designed to pit autonomous players '
+                  'against each other.',
       long_description=readme(),
       classifiers=[
             'Development Status :: 3 - Alpha',
