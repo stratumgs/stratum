@@ -76,15 +76,17 @@ class BaseEngineRunner(object):
         self._last_state = None
         self._connected_views = []
 
+        engine_config = stratumgs.game.get_game_configuration(engine_name)
         self.engine_name = engine_name
-        self.engine_display_name = stratumgs.game.get_game_configuration(engine_name)["display_name"]
+        self.engine_display_name = engine_config["display_name"]
         self.is_running = True
         self.players = players
 
         view_connection = self.init_view_connection()
- 
+
         player_endpoints = [player.create_endpoints_for_game(game_id) for player in players]
-        engine_process = multiprocessing.Process(target=_start_process,
+        engine_process = multiprocessing.Process(
+            target=_start_process,
             args=(engine_constructor, player_endpoints, view_connection))
         engine_process.start()
 

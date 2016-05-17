@@ -36,10 +36,12 @@ def init(port):
         tornado.web.url(r"/games/([^/]+)/configure", ConfigureHandler, name="configure"),
         tornado.web.url(r"/games/([^/]+)/start", StartHandler, name="start"),
         tornado.web.url(r"/games/([^/]+)/view/([\d]+)", ViewHandler, name="view"),
-        tornado.web.url(r"/games/([^/]+)/view/([\d]+)/socket", ViewSocketHandler, name="view_socket"),
+        tornado.web.url(r"/games/([^/]+)/view/([\d]+)/socket", ViewSocketHandler,
+                        name="view_socket"),
         tornado.web.url(r"/matches", MatchesHandler, name="matches"),
         tornado.web.url(r"/players", PlayersHandler, name="players"),
-        tornado.web.url(r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": static_files_path}, name="static")
+        tornado.web.url(r"/assets/(.*)", tornado.web.StaticFileHandler,
+                        {"path": static_files_path}, name="static")
     ], template_path=template_path, debug=True)
     server = tornado.httpserver.HTTPServer(app)
     server.listen(port)
@@ -139,7 +141,8 @@ class MatchesHandler(LoggingHandler):
             else:
                 inactive_matches.append(match)
         self.render("matches.html",
-            active_matches=active_matches, inactive_matches=inactive_matches)
+                    active_matches=active_matches,
+                    inactive_matches=inactive_matches)
 
 
 class PlayersHandler(LoggingHandler):

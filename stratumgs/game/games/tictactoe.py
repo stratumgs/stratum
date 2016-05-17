@@ -10,7 +10,7 @@ CONFIG = {
     "display_name": "TicTacToe",
     "description": "A game of TicTacToe.",
     "num_players": 2,
-    "player_names": ["X", "O"] 
+    "player_names": ["X", "O"]
 }
 
 
@@ -38,7 +38,7 @@ class Engine(BaseEngine):
         :type players: list(player endpoints)
         :param view_connection: The view connection endpoints.
     """
-    
+
     def __init__(self, players=[], view_connection=None):
         super(Engine, self).__init__(players=players, view_connection=view_connection)
         self._board = [[None for _ in range(3)] for _ in range(3)]
@@ -70,7 +70,7 @@ class Engine(BaseEngine):
         elif diag1_val == "O" or diag2_val == "O":
             self._winner = "O"
             return True
-        return not any(None == cell for row in self._board for cell in row)
+        return not any(cell is None for row in self._board for cell in row)
 
     def get_state(self):
         """
