@@ -16,7 +16,7 @@ import stratumgs.game
 import stratumgs.client.server
 
 
-def init(port):
+def init(host, port, debug):
     """
         Initialize the web server.
 
@@ -42,9 +42,9 @@ def init(port):
         tornado.web.url(r"/players", PlayersHandler, name="players"),
         tornado.web.url(r"/assets/(.*)", tornado.web.StaticFileHandler,
                         {"path": static_files_path}, name="static")
-    ], template_path=template_path, debug=True)
+    ], template_path=template_path, debug=debug)
     server = tornado.httpserver.HTTPServer(app)
-    server.listen(port)
+    server.listen(port, address=host)
 
 
 class LoggingHandler(tornado.web.RequestHandler):

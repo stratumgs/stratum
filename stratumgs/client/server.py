@@ -16,16 +16,18 @@ import stratumgs.client.proxy
 _CONNECTED_CLIENTS = {}
 
 
-def init(port):
+def init(host, port):
     """
         Initialize the client server.
 
+        :param host: The host to bind to.
+        :type host: str
         :param port: The client server port.
         :type port: int
     """
 
     client_server = ClientProxyServer()
-    client_server.listen(port)
+    client_server.listen(port, address=host)
 
 
 def get_available_client_names_for_game(game):

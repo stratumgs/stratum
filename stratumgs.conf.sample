@@ -1,0 +1,25 @@
+# Sample configuration file for StratumGS
+
+[global]
+
+# Puts the server into debug mode. In debug mode, more information about errors
+# is displayed. This should not be used in production.
+debug = true
+
+
+[web_server]
+
+# The interface to bind to. Defaults to any interface.
+# host = 0.0.0.0
+
+# The port to listen on. Defaults to 8888.
+# port = 8888
+
+
+[client_server]
+
+# The interface to bind to. Defaults to any interface.
+# host = 127.0.0.1
+
+# The port to listen on. Defaults to 8889.
+# port = 8889

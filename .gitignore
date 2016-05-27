@@ -1,3 +1,6 @@
+# Project configuration
+stratumgs.conf
+
 # Sublime Files
 *.sublime-project
 *.sublime-workspace
