@@ -8,6 +8,11 @@ Unreleased
 These are the changes that have been made to the current working version since
 the previous release.
 
+
+0.1.1 - 2016-05-28
+------------------
+Adds a configuration file to the server.
+
 Added
 ^^^^^
 - Requirements files for documentation and development
