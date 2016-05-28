@@ -16,16 +16,18 @@ import stratumgs.client.proxy
 _CONNECTED_CLIENTS = {}
 
 
-def init(port):
+def init(host, port):
     """
         Initialize the client server.
 
+        :param host: The host to bind to.
+        :type host: str
         :param port: The client server port.
         :type port: int
     """
 
     client_server = ClientProxyServer()
-    client_server.listen(port)
+    client_server.listen(port, address=host)
 
 
 def get_available_client_names_for_game(game):
@@ -37,7 +39,8 @@ def get_available_client_names_for_game(game):
         :type game: string
     """
 
-    return sorted(c.name for c in _CONNECTED_CLIENTS.values() if c.is_available() and game in c.supported_games)
+    return sorted(c.name for c in _CONNECTED_CLIENTS.values() if
+                  c.is_available() and game in c.supported_games)
 
 
 def get_connected_clients():
@@ -153,7 +156,8 @@ class ClientProxyServer(tornado.tcpserver.TCPServer):
 
             stream.set_close_callback(stream_closed)
 
-            _CONNECTED_CLIENTS[name] = stratumgs.client.proxy.ClientProxy(name, supported_games, max_games, stream_proxy)
+            _CONNECTED_CLIENTS[name] = stratumgs.client.proxy.ClientProxy(
+                name, supported_games, max_games, stream_proxy)
 
             print("Client {} connected.".format(name))
 

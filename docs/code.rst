@@ -6,6 +6,7 @@ Code Documentation
 
    code/stratumgs.client.proxy
    code/stratumgs.client.server
+   code/stratumgs.config
    code/stratumgs.game
    code/stratumgs.game.engine
    code/stratumgs.game.engine.client

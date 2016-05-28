@@ -18,7 +18,7 @@ Web Server
 
 The web server is an asynchronous HTTP server, written using Tornado. It is the
 primary way that users interact with the system. It serves three primary
-puroses: displaying games, showing which games are in progress and what clients
+purposes: displaying games, showing which games are in progress and what clients
 are connected, and configuring and starting new games.
 
 To display the connected clients and games in progress, the state is queried

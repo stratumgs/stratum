@@ -53,7 +53,8 @@ class ClientProxy(object):
             try:
                 self.supported_games_display.append(
                     stratumgs.game.get_game_configuration(game)["display_name"])
-            except: pass
+            except:
+                pass
         self.supported_games_display.sort()
 
         def stream_closed():
@@ -186,7 +187,7 @@ class PipeClientProxyHelper():
 
 class SocketClientProxyHelper():
     """
-        A helper object to manage connection endpoints. This helpers uses 
+        A helper object to manage connection endpoints. This helpers uses
         sockets to handle communication between the client and engine.
     """
 

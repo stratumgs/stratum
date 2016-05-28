@@ -1,6 +1,12 @@
 Welcome to Stratum Game Server!
 ===============================
 
+.. note::
+    These docs are for StratumGS version |version|. For the latest docs, please
+    visit https://stratumgs.org/en/latest.
+
+    Check out the project on GitHub: https://github.com/stratumgs/stratumgs
+
 Stratum Game Server is a turn based game engine designed to pit autonomous
 players against each other. The goal of the project is to produce a system where
 people can create autonomous systems, and compete them against each other by
